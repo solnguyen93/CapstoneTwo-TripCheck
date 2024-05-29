@@ -45,6 +45,8 @@ Link to Schema: [Schema](https://github.com/solnguyen93/CapstoneTwo/blob/main/Ca
 
 #### APIs:
 
+-   [Restful Countries Api](https://restfulcountries.com/api-documentation/version/1) for country data
+-   [ExchangeRate-Api](https://www.exchangerate-api.com/docs/overview) for currency rates
 -   [OpenWeather](https://openweathermap.org/) for weather predictions
 -   [Google Maps Platform](https://developers.google.com/maps/documentation/) for autocomplete functionality for destinations
 

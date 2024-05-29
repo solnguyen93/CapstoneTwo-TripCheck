@@ -1,0 +1,36 @@
+                                  List of databases
+      Name      |    Owner    | Encoding | Collate |  Ctype  |   Access privileges   
+----------------+-------------+----------+---------+---------+-----------------------
+ adopt          | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ bankly         | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ bankly_test    | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ biztime        | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ biztime_test   | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ book           | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ book_test      | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ checklist      | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ checklist_test | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ cupcakes       | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ feedback       | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ flightcast     | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ jobly          | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ jobly_test     | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ lunchly        | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ messagely      | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ messagely_test | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ movies_db      | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ mydatabase     | postgres    | UTF8     | C.UTF-8 | C.UTF-8 | =Tc/postgres         +
+                |             |          |         |         | postgres=CTc/postgres+
+                |             |          |         |         | myuser=CTc/postgres
+ playlist-app   | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ postgres       | postgres    | UTF8     | C.UTF-8 | C.UTF-8 | 
+ solnguyen93    | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ template0      | postgres    | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                |             |          |         |         | postgres=CTc/postgres
+ template1      | postgres    | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                |             |          |         |         | postgres=CTc/postgres
+ users          | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ warbler        | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+ warbler-test   | solnguyen93 | UTF8     | C.UTF-8 | C.UTF-8 | 
+(27 rows)
+
