@@ -1,3 +1,74 @@
+# TripCheck
+
+TripCheck is a comprehensive application designed to help users manage their travel checklists. It provides functionalities to create and manage checklists for different trips, ensuring that users don't forget any important items. The app integrates various APIs to enhance the travel planning experience with weather forecasts, currency exchange rates, and visa requirements.
+
+## Getting Started
+
+To get a local copy up and running follow these steps.
+
+### Prerequisites
+
+-   Install Python 3.8 or higher: [Python Installation Guide](https://www.python.org/downloads/)
+-   Install PostgreSQL: [PostgreSQL Installation Guide](https://www.postgresql.org/download/)
+-   Install Node.js and npm: [Node.js Installation Guide](https://nodejs.org/)
+
+### Step 1: Clone the Repository
+
+Clone the repository to your local machine using the following command:
+
+```bash
+git clone https://github.com/solnguyen93/CapstoneTwo
+```
+
+### Step 2: Install Frontend Dependencies and Start Frontend
+
+Navigate to the frontend directory, install the necessary dependencies, and start the frontend server:
+
+```bash
+cd CapstoneTwo/my-frontend
+npm install
+npm start
+```
+
+### Step 3: Database Configuration
+
+Ensure PostgreSQL is installed and running. Create a database named 'mydatabase' using the following command:
+
+```bash
+createdb mydatabase
+```
+
+### Step 4: DSet Up Environment Variables
+
+Create a .env file in the my-backend directory and add the following environment variables:
+
+```bash
+PORT=5000
+PGUSER=your_username
+PGPASSWORD=your_password
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=mydatabase
+JWT_SECRET=your_jwt_secret
+```
+
+### Step 5: Install Backend Dependencies, Seed Database, and Start Backend
+
+Navigate to the backend directory, install the necessary dependencies, seed the database with initial data, and start the backend server:
+
+```bash
+cd CapstoneTwo/my-backend
+npm install
+psql mydatabase
+\i setup.sql
+\q
+npm start
+```
+
+## Running the Application
+
+After completing the steps above, application should be up and running with the frontend accessible at http://localhost:3000 and the backend server running on its respective port as defined in your backend configuration or the default http://localhost:5000.
+
 ## Database Schema
 
 Link to Schema: [Schema](https://github.com/solnguyen93/CapstoneTwo/blob/main/Capstone%20Two_%20Schema.png)
@@ -32,6 +103,7 @@ Link to Schema: [Schema](https://github.com/solnguyen93/CapstoneTwo/blob/main/Ca
 -   **checklist_id**: Integer, foreign key (references Checklist.id), not null
 -   **parent_item_id**: Integer, foreign key (references Item.id)
 -   **name**: Text, not null, unique
+-   **position**: Integer
 -   **is_checked**: Boolean, not null, default FALSE
 
 ### Relationships

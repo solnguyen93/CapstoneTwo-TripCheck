@@ -5,10 +5,16 @@ import { formatDateRange } from '../helpers/formatter';
 import TripCheckApi from '../api.js';
 import useDataFetching from '../hooks/useDataFetching';
 import ChecklistItem from './ChecklistItem.js';
+import { useAuth } from '../AuthContext';
 
 const ChecklistDetails = () => {
     const [focusItem, setFocusItem] = useState(null);
-    const { checklistId } = useParams(); // Get the checklist ID from URL params
+    const { setChecklistId } = useAuth();
+    const { checklistId } = useParams();
+
+    useEffect(() => {
+        setChecklistId(checklistId);
+    }, [checklistId]);
 
     // Fetch checklist data (details)
     const { data: checklist, loading: checklistLoading } = useDataFetching(() => {
@@ -41,10 +47,6 @@ const ChecklistDetails = () => {
         // Cleanup function to clear the interval when the component unmounts or when `focusItem` changes
         return () => clearInterval(intervalId);
     }, [focusItem]);
-
-    useEffect(() => {
-        // console.log('Item State:', items); // * * * * * * * * * * FOR TESTING - DELETE AFTER * * * * * * * * * *
-    }, [items]);
 
     // If still loading, display a loading message
     if (checklistLoading || itemsLoading) {
@@ -262,10 +264,20 @@ const ChecklistDetails = () => {
             {/* Display checklist details such as title, description, destination, and date */}
             <div className="checklist-details">
                 <h2>{checklist.title}</h2>
-                {checklist.description && <p>Description: {checklist.description}</p>}
-                {checklist.trip_destination && <p>Destination: {checklist.trip_destination}</p>}
-                {formatDateRange(checklist.trip_from_date, checklist.trip_to_date) && (
-                    <p>Date: {formatDateRange(checklist.trip_from_date, checklist.trip_to_date)}</p>
+                {checklist.description && (
+                    <p>
+                        <strong>Description:</strong> {checklist.description}
+                    </p>
+                )}
+                {checklist.tripDestination && (
+                    <p>
+                        <strong>Destination:</strong> {checklist.tripDestination}
+                    </p>
+                )}
+                {formatDateRange(checklist.tripFromDate, checklist.tripToDate) && (
+                    <p>
+                        <strong>Date:</strong> {formatDateRange(checklist.tripFromDate, checklist.tripToDate)}
+                    </p>
                 )}
             </div>
             {/* Render checklist items */}

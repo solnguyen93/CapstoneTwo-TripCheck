@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import TripCheckApi from '../api.js';
+import { useNavigate } from 'react-router-dom';
 
 const NewChecklistForm = () => {
+    const navigate = useNavigate();
+    const [error, setError] = useState('');
     const [newChecklist, setNewChecklist] = useState({
         title: '',
         description: '',
@@ -12,16 +15,20 @@ const NewChecklistForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        await TripCheckApi.addChecklist(newChecklist);
-
-        setNewChecklist({
-            title: '',
-            description: '',
-            tripDestination: '',
-            tripFromDate: '',
-            tripToDate: '',
-        });
+        try {
+            const res = await TripCheckApi.addChecklist(newChecklist);
+            setNewChecklist({
+                title: '',
+                description: '',
+                tripDestination: '',
+                tripFromDate: '',
+                tripToDate: '',
+            });
+            navigate(`/checklist/${res.newChecklist.id}/items`);
+        } catch (error) {
+            console.error('Adding new checklist error:', error.message);
+            setError(error.message);
+        }
     };
 
     const handleChange = (e) => {
@@ -56,6 +63,7 @@ const NewChecklistForm = () => {
                 <input type="date" name="tripToDate" value={newChecklist.tripToDate} onChange={handleChange} />
             </div>
             <button type="submit">Create Checklist</button>
+            <button type="submit">Cancel</button>
         </form>
     );
 };

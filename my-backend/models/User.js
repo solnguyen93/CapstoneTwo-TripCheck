@@ -37,6 +37,13 @@ class User {
 
     // Method to register a new user
     static async register(name, username, email, password) {
+        if (!name || !username || !email || !password) {
+            throw new BadRequestError(
+                `Required fields missing: ${!name ? 'Name,' : ''} ${!username ? 'Username,' : ''} ${!email ? 'Email,' : ''} ${
+                    !password ? 'Password' : ''
+                }`
+            );
+        }
         // Check for duplicate username or email in the database
         const duplicateCheck = await pool.query(
             `SELECT username, email

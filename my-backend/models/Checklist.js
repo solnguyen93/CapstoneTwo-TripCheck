@@ -2,7 +2,7 @@
 
 const pool = require('../db');
 const { NotFoundError, BadRequestError, UnauthorizedError } = require('../expressError');
-
+const { sqlForPartialUpdate } = require('../helpers/sql');
 /**
  * Checklist
  */
@@ -10,7 +10,7 @@ const { NotFoundError, BadRequestError, UnauthorizedError } = require('../expres
 const getChecklistById = async (checklistId, userId) => {
     try {
         const result = await pool.query(
-            `SELECT *
+            `SELECT c.id, c.title, c.description, c.trip_destination , c.trip_from_date, c.trip_to_date
             FROM checklists c
             JOIN user_checklists uc ON c.id = uc.checklist_id 
             WHERE c.id = $1 AND uc.user_id = $2`,
@@ -29,16 +29,39 @@ const getChecklistById = async (checklistId, userId) => {
 const getChecklistsByUserId = async (userId) => {
     try {
         const result = await pool.query(
-            `SELECT *
+            `SELECT c.id, c.title, c.description, c.trip_destination, c.trip_from_date , c.trip_to_date 
             FROM checklists c
             JOIN user_checklists uc ON c.id = uc.checklist_id
-            WHERE uc.user_id = $1`,
+            WHERE uc.user_id = $1  `,
             [userId]
         );
         return result.rows;
     } catch (error) {
         console.error(`Error fetching checklists for user with id ${userId}:`, error);
         throw new BadRequestError(`Error fetching checklists for user with id ${userId}: ${error.message}`);
+    }
+};
+
+const editChecklist = async (newChecklist, checklistId, userId) => {
+    const { title, description, trip_destination, trip_from_date, trip_to_date } = newChecklist;
+    try {
+        const result = await pool.query(
+            `UPDATE checklists 
+            SET title = $1, description = $2, trip_destination = $3, trip_from_date = $4, trip_to_date = $5
+            WHERE id = $6
+            RETURNING *`,
+            [title, description, trip_destination, trip_from_date, trip_to_date, checklistId]
+        );
+
+        // Check if checklist was found
+        if (!result.rows[0]) {
+            throw new NotFoundError(`Checklist not found with id: ${checklistId}`);
+        }
+
+        return result;
+    } catch (error) {
+        console.error(`Error editing checklist with id ${checklistId}:`, error);
+        throw new BadRequestError(`Error editing checklist with id ${checklistId}: ${error.message}`);
     }
 };
 
@@ -62,7 +85,6 @@ const deleteChecklistById = async (checklistId, userId) => {
 };
 
 const addChecklist = async (newChecklist, userId) => {
-    console.log('test', newChecklist, 'test2', userId);
     const { title, description, trip_destination, trip_from_date, trip_to_date } = newChecklist;
     try {
         const checklistResult = await pool.query(
@@ -209,6 +231,7 @@ const buildTree = async (items, parentId = null) => {
 module.exports = {
     getChecklistById,
     getChecklistsByUserId,
+    editChecklist,
     deleteChecklistById,
     addChecklist,
     getItemsByChecklistId,

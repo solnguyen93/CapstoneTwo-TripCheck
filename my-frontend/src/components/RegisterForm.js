@@ -8,6 +8,7 @@ const RegisterForm = () => {
     const [username, setUsername] = useState('sososol');
     const [email, setEmail] = useState('sol@gmail.com');
     const [password, setPassword] = useState('solsol');
+    const [error, setError] = useState('');
     const { register } = useAuth();
     const navigate = useNavigate();
 
@@ -17,12 +18,14 @@ const RegisterForm = () => {
             await register(name, username, email, password);
             navigate('/tripcheck');
         } catch (error) {
-            console.error('Failed to register:', error);
+            console.error('Register error:', error.message);
+            setError(error.msg);
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            <h3>Register</h3>
             <div>
                 <label>Name:</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} />

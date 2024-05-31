@@ -14,6 +14,17 @@ function authenticateJWT(req, res, next) {
     }
 }
 
+async function ensureNotLoggedIn(req, res, next) {
+    try {
+        if (res.locals.user) {
+            throw new UnauthorizedError();
+        }
+        return next();
+    } catch (err) {
+        return next(err);
+    }
+}
+
 async function ensureLoggedIn(req, res, next) {
     try {
         if (!res.locals.user) throw new UnauthorizedError();
@@ -45,6 +56,7 @@ async function ensureCurrentUserOrAdmin(req, res, next) {
 
 module.exports = {
     authenticateJWT,
+    ensureNotLoggedIn,
     ensureLoggedIn,
     ensureAdmin,
     ensureCurrentUserOrAdmin,

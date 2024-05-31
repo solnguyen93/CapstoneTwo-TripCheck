@@ -58,6 +58,16 @@ class TripCheckApi {
         }
     }
 
+    static async editChecklist(newChecklist, checklistId) {
+        try {
+            let res = await TripCheckApi.request(`checklist/${checklistId}`, newChecklist, 'put');
+            return res;
+        } catch (error) {
+            console.error('Error editing checklist:', error);
+            throw error;
+        }
+    }
+
     static async deleteChecklistById(checklistId) {
         try {
             let res = await TripCheckApi.request(`checklist/${checklistId}`, 'delete');

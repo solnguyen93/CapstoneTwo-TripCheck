@@ -6,6 +6,7 @@ const LoginForm = () => {
     // HARD CODE USER FOR TESTING - DELETE AFTER * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     const [username, setUsername] = useState('testuser');
     const [password, setPassword] = useState('password');
+    const [error, setError] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -13,14 +14,16 @@ const LoginForm = () => {
         e.preventDefault();
         try {
             await login(username, password);
-            navigate('/tripcheck');
+            navigate('/checklist');
         } catch (error) {
-            console.error('Failed to login:', error);
+            console.error('Login error:', error.message);
+            setError(error.message);
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            <h3>Log In</h3>
             <div>
                 <label>Username:</label>
                 <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />

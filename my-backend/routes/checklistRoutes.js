@@ -1,9 +1,11 @@
 const express = require('express');
 const { authenticateJWT } = require('../middleware/auth');
 const router = express.Router();
+const { camelToSnake, snakeToCamel } = require('../helpers/sql');
 const {
     getChecklistById,
     getChecklistsByUserId,
+    editChecklist,
     deleteChecklistById,
     addChecklist,
     getItemsByChecklistId,
@@ -23,7 +25,8 @@ router.get('/:checklistId', authenticateJWT, async (req, res) => {
     const checklistId = req.params.checklistId;
     try {
         const checklist = await getChecklistById(checklistId, userId);
-        res.json(checklist);
+        const camelCaseChecklist = snakeToCamel(checklist); // Convert snake_case keys to camelCase
+        res.json(camelCaseChecklist);
     } catch (error) {
         console.error('Error fetching checklist by checklist id:', error);
         res.status(500).json({ error: 'Server error' });
@@ -42,6 +45,20 @@ router.get('/', authenticateJWT, async (req, res) => {
     }
 });
 
+// Route to edit checklists by checklist id
+router.put('/:checklistId', authenticateJWT, async (req, res) => {
+    const userId = res.locals.user.id;
+    const checklistId = req.params.checklistId;
+    const data = camelToSnake(req.body);
+    try {
+        const editedChecklist = await editChecklist(data, checklistId, userId);
+        res.json(editedChecklist);
+    } catch (error) {
+        console.error('Error editing checklist:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Route to delete checklist by checklist id
 router.delete('/:checklistId', authenticateJWT, async (req, res) => {
     const userId = res.locals.user.id;
@@ -49,6 +66,7 @@ router.delete('/:checklistId', authenticateJWT, async (req, res) => {
     try {
         const checklist = await deleteChecklistById(checklistId, userId);
         res.json(checklist);
+        res.json({ message: 'Checklist editted successfully', checklist });
     } catch (error) {
         console.error('Error fetching checklist and items by checklist id:', error);
         res.status(500).json({ error: 'Server error' });
@@ -59,8 +77,10 @@ router.delete('/:checklistId', authenticateJWT, async (req, res) => {
 router.post('/new', authenticateJWT, async (req, res) => {
     const userId = res.locals.user.id;
     try {
-        const data = req.body;
+        const data = camelToSnake(req.body);
+        console.log('TEST 1 - data', data);
         const newChecklist = await addChecklist(data, userId);
+        console.log('TEST 2t - checklist', newChecklist);
         res.json({ message: 'Checklist added successfully', newChecklist });
     } catch (error) {
         console.error('Error adding checklist:', error);

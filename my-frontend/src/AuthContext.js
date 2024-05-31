@@ -7,6 +7,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [checklistId, setChecklistId] = useState(null);
 
     const register = async (name, username, email, password) => {
         try {
@@ -14,14 +15,18 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', res.data.token);
             setUser(res.data.user);
         } catch (error) {
-            console.error('Registration error:', error.response.data.error);
+            throw new Error(error.response.data.message);
         }
     };
 
     const login = async (email, password) => {
-        const res = await axios.post(`${BASE_URL}/auth/login`, { email, password });
-        localStorage.setItem('token', res.data.token);
-        setUser(res.data.user);
+        try {
+            const res = await axios.post(`${BASE_URL}/auth/login`, { email, password });
+            localStorage.setItem('token', res.data.token);
+            setUser(res.data.user);
+        } catch (error) {
+            throw new Error(error.response.data.message);
+        }
     };
 
     const logout = () => {
@@ -29,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    return <AuthContext.Provider value={{ user, register, login, logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ user, register, login, logout, checklistId, setChecklistId }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

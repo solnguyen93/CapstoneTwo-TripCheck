@@ -9,7 +9,6 @@ const ChecklistManager = () => {
     return (
         <div>
             <h1>Checklist Manager</h1>
-            <Link to="/checklist/new">Create New Checklist</Link>
             {loading ? (
                 <p>Loading...</p>
             ) : (
