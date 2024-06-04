@@ -125,3 +125,16 @@ Link to Schema: [Schema](https://github.com/solnguyen93/CapstoneTwo/blob/main/Ca
 #### Websites:
 
 -   [visahq.com](https://www.visahq.com/) for visa prerequisites
+
+#### Key Features:
+
+-   **Keyboard-Focused Item Management:** Users can quickly add new checklist items by pressing "Enter" and delete items with ease using the "Backspace" key. Minimizing the need for switching between keyboard and mouse.
+
+-   **Tree Structure:** Employ a tree-based structure and recursive algorithms to effectively manage nested items and their interconnections. This facilitates the creation of nested items within each checklist, enabling users to organize items hierarchically.
+
+-   **Sharing Functionality:** Enable users to share their checklists with other users by providing their usernames.
+-   **Access Control:** Implement access control mechanisms based on user roles (owner or shared) and authorization requirements.
+-   **Data Persistence:** Ensure that checklist data is securely stored and persisted in a database.
+-   **Real-time Updates:** Provide real-time updates for shared checklists, allowing users to see changes made by others in real-time.
+-   **User Authentication:** Implement user authentication to allow users to sign up, log in, and manage their accounts securely.
+-   **Notifications:** Notify users when their checklists are shared with others or when changes are made to shared checklists.

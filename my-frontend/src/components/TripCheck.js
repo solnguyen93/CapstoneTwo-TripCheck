@@ -60,7 +60,7 @@ const TripCheck = () => {
                     {/* Information for quick access and demo */}
                     <p>Register your own account or use the credentials below for quick access and demo:</p>
                     <p>
-                        <strong>Username:</strong> testuser
+                        <strong>Username:</strong> testuser, testuser2, testuser3, testuser4
                         <br />
                         <strong>Password:</strong> password
                     </p>
