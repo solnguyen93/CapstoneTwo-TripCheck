@@ -9,7 +9,7 @@ const RegisterForm = () => {
     const [username, setUsername] = useState('sososol');
     const [email, setEmail] = useState('sol@gmail.com');
     const [password, setPassword] = useState('solsol');
-    const { register } = useAuth();
+    const { register, setMsg } = useAuth();
     const navigate = useNavigate();
 
     // Handle form submission for user registration
@@ -23,6 +23,7 @@ const RegisterForm = () => {
         } catch (error) {
             // Log error message if registration fails
             console.error('Register error:', error.message);
+            setMsg({ message: error.message, type: 'danger' });
         }
     };
 

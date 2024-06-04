@@ -8,6 +8,9 @@ const {
     editChecklist,
     deleteChecklistById,
     addChecklist,
+    shareChecklist,
+    getSharedUsers,
+    deleteSharedUser,
     getItemsByChecklistId,
     toggleItem,
     updateItemName,
@@ -29,7 +32,7 @@ router.get('/:checklistId', authenticateJWT, async (req, res) => {
         res.json(camelCaseChecklist);
     } catch (error) {
         console.error('Error fetching checklist by checklist id:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -41,7 +44,7 @@ router.get('/', authenticateJWT, async (req, res) => {
         res.json(checklists);
     } catch (error) {
         console.error('Error fetching checklists by user id:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -55,7 +58,7 @@ router.put('/:checklistId', authenticateJWT, async (req, res) => {
         res.json(editedChecklist);
     } catch (error) {
         console.error('Error editing checklist:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -68,7 +71,7 @@ router.delete('/:checklistId', authenticateJWT, async (req, res) => {
         res.json({ message: 'Checklist deleted successfully' });
     } catch (error) {
         console.error('Error fetching checklist and items by checklist id:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -81,7 +84,46 @@ router.post('/new', authenticateJWT, async (req, res) => {
         res.json({ message: 'Checklist added successfully', newChecklist });
     } catch (error) {
         console.error('Error adding checklist:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
+    }
+});
+
+// Route to share checklist
+router.post('/share', authenticateJWT, async (req, res) => {
+    const userId = res.locals.user.id;
+    const { checklistId, sharedUserId } = req.body;
+    try {
+        await shareChecklist(checklistId, sharedUserId, userId);
+        res.json({ message: 'Checklist shared successfully' });
+    } catch (error) {
+        console.error('Error adding checklist:', error);
+        res.status(error.status || 500).json({ message: error.message });
+    }
+});
+
+// Route to get all shared users
+router.get('/:checklistId/shared-users', authenticateJWT, async (req, res) => {
+    const userId = res.locals.user.id;
+    const checklistId = req.params.checklistId;
+    try {
+        const users = await getSharedUsers(checklistId, userId);
+        res.json(users);
+    } catch (error) {
+        console.error('Error getting shared users for checklist:', error);
+        res.status(error.status || 500).json({ message: error.message });
+    }
+});
+
+// Route to delete shared user from check list
+router.delete('/:checklistId/shared-users/:sharedUserId', authenticateJWT, async (req, res) => {
+    const userId = res.locals.user.id;
+    const { checklistId, sharedUserId } = req.params;
+    try {
+        await deleteSharedUser(checklistId, sharedUserId, userId);
+        res.json({ message: 'Shared user deleted successfully' });
+    } catch (error) {
+        console.error('Error getting shared users for checklist:', error);
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -89,7 +131,7 @@ router.post('/new', authenticateJWT, async (req, res) => {
  * Item routes
  */
 
-// Route to get items by checklist id
+// Route to get all shared users for checklist by id
 router.get('/:checklistId/items', authenticateJWT, async (req, res) => {
     const userId = res.locals.user.id;
     const checklistId = req.params.checklistId;
@@ -99,7 +141,7 @@ router.get('/:checklistId/items', authenticateJWT, async (req, res) => {
         res.json(itemsArray);
     } catch (error) {
         console.error('Error fetching checklist and items by checklist id:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -120,7 +162,7 @@ router.put('/:checklistId/items/:itemId', authenticateJWT, async (req, res) => {
         }
     } catch (error) {
         console.error(`Error ${type === 'updateName' ? 'updating item name' : 'toggling item'}:`, error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -132,7 +174,7 @@ router.delete('/:checklistId/items/:itemId', authenticateJWT, async (req, res) =
         res.json({ message: 'Item deleted successfully' });
     } catch (error) {
         console.error('Error deleting item:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 
@@ -144,7 +186,7 @@ router.post('/:checklistId/items/new', authenticateJWT, async (req, res) => {
         res.json({ message: 'Item added successfully', newItem });
     } catch (error) {
         console.error('Error adding item:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(error.status || 500).json({ message: error.message });
     }
 });
 

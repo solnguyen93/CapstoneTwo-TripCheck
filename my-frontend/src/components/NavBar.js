@@ -68,19 +68,27 @@ const NavBar = () => {
         setShowConfirmation(false);
         if (confirmationAction === 'delete') {
             try {
-                // Perform deletion action
+                // Call the TripCheckApi method to delete checklist by ID
                 await TripCheckApi.deleteChecklistById(checklistId);
                 // Display success message
                 setMsg({ message: 'Checklist deleted successfully', type: 'success' });
-                // Optionally, navigate to a different route after deletion
+                // Navigate to a different route after deletion
                 navigate('/checklist');
             } catch (error) {
                 // Handle any errors that occur during deletion
                 console.error('Error deleting checklist:', error);
             }
         } else if (confirmationAction === 'share') {
-            // Perform share action with shareUsername
-            navigate(`/checklist/${checklistId}/share?user=${shareUsername}`);
+            try {
+                // Call the TripCheckApi method to share checklist with another user
+                await TripCheckApi.shareChecklist(checklistId, shareUsername);
+                // Display success message
+                setMsg({ message: 'Checklist shared successfully', type: 'success' });
+            } catch (error) {
+                // Handle any errors that occur during deletion
+                console.error('Error sharing checklist:', error);
+                setMsg({ message: error.message, type: 'danger' });
+            }
         }
     };
 

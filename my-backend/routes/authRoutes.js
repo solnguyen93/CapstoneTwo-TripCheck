@@ -2,9 +2,10 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
+const { ensureNotLoggedIn } = require('../middleware/auth');
 
 // Route for user registration
-router.post('/register', async (req, res) => {
+router.post('/register', ensureNotLoggedIn, async (req, res) => {
     const { name, username, email, password } = req.body;
     try {
         const user = await User.register(name, username, email, password);
@@ -18,7 +19,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Route for user login
-router.post('/login', async (req, res) => {
+router.post('/login', ensureNotLoggedIn, async (req, res) => {
     const { email, password } = req.body;
 
     try {

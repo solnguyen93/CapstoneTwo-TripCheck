@@ -25,12 +25,9 @@ class TripCheckApi {
         try {
             // Make the request using axios and return the response data
             return (await axios({ url, method, data, params, headers })).data;
-        } catch (err) {
-            // Handle errors from the API response
-            console.error('API Error:', err.response);
-            let message = err.response.data.error.message;
-            // Throw an array of error messages for consistency
-            throw Array.isArray(message) ? message : [message];
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
         }
     }
 
@@ -84,7 +81,6 @@ class TripCheckApi {
 
     // Delete checklist by ID
     static async deleteChecklistById(checklistId) {
-        console.log('checklistId in tripcheckapi', checklistId);
         try {
             const res = await TripCheckApi.request(`checklist/${checklistId}`, {}, 'delete');
             return res;
@@ -101,6 +97,42 @@ class TripCheckApi {
             return res;
         } catch (error) {
             console.error('Error adding checklist:', error);
+            throw error;
+        }
+    }
+
+    // Share checklist
+    static async shareChecklist(checklistId, username) {
+        try {
+            // Get the user ID of the user being shared with
+            const sharedUser = await TripCheckApi.getUserByUsername(username);
+            const sharedUserId = sharedUser.id;
+            const res = await TripCheckApi.request(`checklist/share`, { checklistId, sharedUserId }, 'post');
+            return res;
+        } catch (error) {
+            console.error('Error getting user:', error);
+            throw new Error(error.response.data.message || 'Error getting user');
+        }
+    }
+
+    // Get all shared users for checklist by id
+    static async getSharedUsers(checklistId) {
+        try {
+            let res = await TripCheckApi.request(`checklist/${checklistId}/shared-users`);
+            return res;
+        } catch (error) {
+            console.error('Error fetching shared users for checklist by id:', error);
+            throw error;
+        }
+    }
+
+    // Delete shared user for checklist by id
+    static async deleteSharedUser(checklistId, sharedUserId) {
+        try {
+            let res = await TripCheckApi.request(`checklist/${checklistId}/shared-users/${sharedUserId}`, {}, 'delete');
+            return res;
+        } catch (error) {
+            console.error('Error fetching shared users for checklist by id:', error);
             throw error;
         }
     }
@@ -160,6 +192,21 @@ class TripCheckApi {
             return res;
         } catch (error) {
             console.error('Error adding item:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * User routes
+     */
+
+    // Get user by username
+    static async getUserByUsername(username) {
+        try {
+            const res = await TripCheckApi.request(`user/${username}`);
+            return res;
+        } catch (error) {
+            console.error('Error fetching user by username', error);
             throw error;
         }
     }

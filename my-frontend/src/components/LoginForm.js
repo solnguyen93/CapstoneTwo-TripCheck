@@ -6,8 +6,7 @@ const LoginForm = () => {
     // HARD CODE USER FOR TESTING - DELETE AFTER * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     const [username, setUsername] = useState('testuser');
     const [password, setPassword] = useState('password');
-    const [error, setError] = useState('');
-    const { login } = useAuth();
+    const { login, setMsg } = useAuth();
     const navigate = useNavigate();
 
     // Handle form submission for user login
@@ -21,7 +20,7 @@ const LoginForm = () => {
         } catch (error) {
             // Log and display error message if login fails
             console.error('Login error:', error.message);
-            setError(error.message);
+            setMsg({ message: error.message, type: 'danger' });
         }
     };
 

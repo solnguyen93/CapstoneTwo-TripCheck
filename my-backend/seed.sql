@@ -42,9 +42,9 @@ VALUES
 -- Associate test user with additional checklists
 INSERT INTO user_checklists (user_id, checklist_id, role)
 VALUES 
-    (1, 2, 'Owner'),
-    (1, 3, 'Owner'),
-    (1, 4, 'Owner');
+    (1, 2, 'owner'),
+    (1, 3, 'owner'),
+    (1, 4, 'owner');
 
 -- Insert items for mountain hiking checklist
 INSERT INTO items (checklist_id, parent_item_id, name, is_checked, position)

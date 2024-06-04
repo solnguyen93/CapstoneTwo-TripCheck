@@ -1,11 +1,12 @@
 const pool = require('../db'); // Database connection pool
 const { NotFoundError, BadRequestError, UnauthorizedError } = require('../expressError'); // Custom error classes
+const User = require('../models/User');
 
 /**
  * Checklist
  */
 
-// Function to get a checklist by its ID and user ID
+// Function to get a checklist by its ID
 const getChecklistById = async (checklistId, userId) => {
     try {
         // Query the database for the checklist with the provided ID and user ID
@@ -76,6 +77,17 @@ const deleteChecklistById = async (checklistId, userId) => {
         // Delete entry from user_checklists table
         await pool.query(`DELETE FROM user_checklists WHERE checklist_id = $1 AND user_id = $2`, [checklistId, userId]);
 
+        // Check if the requesting user (userId) is the owner of the checklist (checklistId)
+        const isOwnerQuery = await pool.query(`SELECT 1 FROM user_checklists WHERE user_id = $1 AND checklist_id = $2 AND role = 'owner'`, [
+            userId,
+            checklistId,
+        ]);
+
+        // If the user is not the owner, throw an UnauthorizedError
+        if (!isOwnerQuery.rows.length) {
+            return;
+        }
+
         // Delete entry from checklists table
         const result = await pool.query(`DELETE FROM checklists WHERE id = $1 RETURNING *`, [checklistId]);
 
@@ -83,7 +95,7 @@ const deleteChecklistById = async (checklistId, userId) => {
         if (!result.rows[0]) {
             throw new NotFoundError(`Checklist not found with id: ${checklistId}`);
         }
-        return result.rows[0]; // Return the deleted checklist
+        return { message: 'Deleted check list successfully' };
     } catch (error) {
         console.error(`Error deleting checklist with id ${checklistId}:`, error);
         throw new BadRequestError(`Error deleting checklist with id ${checklistId}: ${error.message}`);
@@ -123,6 +135,103 @@ const addChecklist = async (newChecklist, userId) => {
     } catch (error) {
         console.error('Error adding checklist:', error);
         throw new BadRequestError(`Error adding checklist: ${error.message}`);
+    }
+};
+
+const shareChecklist = async (checklistId, sharedUserId, userId) => {
+    try {
+        // Check if the requesting user is trying to add themselves as a shared user
+        if (sharedUserId === userId) {
+            throw new BadRequestError('You can not add yourself as a shared user');
+        }
+
+        // Check if the requesting user (userId) is the owner of the checklist (checklistId)
+        const isOwnerQuery = await pool.query(`SELECT 1 FROM user_checklists WHERE user_id = $1 AND checklist_id = $2 AND role = 'owner'`, [
+            userId,
+            checklistId,
+        ]);
+
+        // If the user is not the owner, throw an UnauthorizedError
+        if (!isOwnerQuery.rows.length) {
+            throw new UnauthorizedError('You are not the owner of this checklist');
+        }
+
+        // Check if the entry already exists
+        const isSharedQuery = await pool.query(`SELECT * FROM user_checklists WHERE user_id = $1 AND checklist_id = $2`, [sharedUserId, checklistId]);
+
+        // If the entry already exists, return or throw an error
+        if (isSharedQuery.rows.length) {
+            throw new BadRequestError('Checklist already shared with this user');
+        }
+
+        // Add entry to user_checklists table for the shared user
+        await pool.query(
+            `INSERT INTO user_checklists (user_id, checklist_id, role)
+            VALUES ($1, $2, 'shared')`,
+            [sharedUserId, checklistId]
+        );
+
+        return { message: 'Added shared user successfully' };
+    } catch (error) {
+        throw error;
+    }
+};
+
+const getSharedUsers = async (checklistId, userId) => {
+    try {
+        // Check if the requesting user (userId) is the owner of the checklist (checklistId)
+        const isOwnerQuery = await pool.query(`SELECT 1 FROM user_checklists WHERE user_id = $1 AND checklist_id = $2 AND role = 'owner'`, [
+            userId,
+            checklistId,
+        ]);
+
+        // If the user is not the owner, throw an UnauthorizedError
+        if (!isOwnerQuery.rows.length) {
+            throw new UnauthorizedError('You are not the owner of this checklist');
+        }
+
+        // Check if the entry already exists
+        const sharedUsers = await pool.query(
+            `SELECT u.id, u.username
+            FROM users u
+            JOIN user_checklists uc ON u.id = uc.user_id
+            WHERE uc.checklist_id = $1 AND uc.role = 'shared'
+            ORDER BY u.username;`,
+            [checklistId]
+        );
+        if (!sharedUsers.rows.length) {
+            return null;
+        }
+
+        return sharedUsers.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const deleteSharedUser = async (checklistId, sharedUserId, userId) => {
+    try {
+        // Check if the requesting user (userId) is the owner of the checklist (checklistId)
+        const isOwnerQuery = await pool.query(`SELECT 1 FROM user_checklists WHERE user_id = $1 AND checklist_id = $2 AND role = 'owner'`, [
+            userId,
+            checklistId,
+        ]);
+
+        // If the user is not the owner, throw an UnauthorizedError
+        if (!isOwnerQuery.rows.length) {
+            throw new UnauthorizedError('You are not the owner of this checklist');
+        }
+
+        // Check if the entry already exists
+        await pool.query(
+            `DELETE FROM user_checklists 
+            WHERE checklist_id = $1 AND user_id = $2 AND role = 'shared';`,
+            [checklistId, sharedUserId]
+        );
+
+        return { message: 'Deleted shared user successfully' };
+    } catch (error) {
+        throw error;
     }
 };
 
@@ -264,6 +373,9 @@ module.exports = {
     editChecklist,
     deleteChecklistById,
     addChecklist,
+    shareChecklist,
+    getSharedUsers,
+    deleteSharedUser,
     getItemsByChecklistId,
     toggleItem,
     updateItemName,

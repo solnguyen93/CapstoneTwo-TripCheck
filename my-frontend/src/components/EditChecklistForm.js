@@ -19,8 +19,16 @@ const EditChecklistForm = () => {
         return TripCheckApi.getChecklistById(checklistId);
     });
 
+    const {
+        data: users,
+        setData: setUsers,
+        loading: usersLoading,
+    } = useDataFetching(() => {
+        return TripCheckApi.getSharedUsers(checklistId);
+    });
+
     // If checklist data is still loading, display a loading message
-    if (checklistLoading) {
+    if (checklistLoading || usersLoading) {
         return <p>Loading...</p>;
     }
 
@@ -61,38 +69,68 @@ const EditChecklistForm = () => {
         }));
     };
 
+    const handleDeleteSharedUser = async (checklistId, userId) => {
+        try {
+            await TripCheckApi.deleteSharedUser(checklistId, userId);
+            setUsers((prevState) => prevState.filter((user) => user.id !== userId));
+            setMsg({ message: 'Shared user delete successfully', type: 'success' });
+        } catch (error) {
+            console.error('Shared user delete error:', error.message);
+            setMsg({ message: error.message, type: 'danger' });
+        }
+    };
+
     // Render the edit checklist form
     return (
-        <form onSubmit={handleSubmit}>
-            {/* Display alert message if present */}
-            {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
+        <div>
+            <form onSubmit={handleSubmit}>
+                {/* Display alert message if present */}
+                {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
+                <div>
+                    <label>Title:</label>
+                    <input type="text" name="title" value={checklist?.title || ''} onChange={handleChange} />
+                </div>
+                <div>
+                    <label>Description:</label>
+                    <textarea name="description" value={checklist?.description || ''} onChange={handleChange} />
+                </div>
+                <div>
+                    <label>Trip Destination:</label>
+                    <input type="text" name="tripDestination" value={checklist?.tripDestination || ''} onChange={handleChange} />
+                </div>
+                <div>
+                    <label>Trip From Date:</label>
+                    <input type="date" name="tripFromDate" value={checklist?.tripFromDate || ''} onChange={handleChange} />
+                </div>
+                <div>
+                    <label>Trip To Date:</label>
+                    <input type="date" name="tripToDate" value={checklist?.tripToDate || ''} onChange={handleChange} />
+                </div>
+                {/* Button to submit form */}
+                <button type="submit">Submit</button>
+                {/* Button to cancel and go back */}
+                <button type="button" onClick={() => navigate(-1)}>
+                    Cancel
+                </button>
+            </form>
             <div>
-                <label>Title:</label>
-                <input type="text" name="title" value={checklist?.title || ''} onChange={handleChange} />
+                <h2>Shared Users:</h2>
+                {users ? (
+                    <ul>
+                        {users.map((user) => (
+                            <div key={user.id}>
+                                <button type="button" onClick={() => handleDeleteSharedUser(checklistId, user.id)}>
+                                    X
+                                </button>
+                                <li>{user.username}</li>
+                            </div>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>no users</p>
+                )}
             </div>
-            <div>
-                <label>Description:</label>
-                <textarea name="description" value={checklist?.description || ''} onChange={handleChange} />
-            </div>
-            <div>
-                <label>Trip Destination:</label>
-                <input type="text" name="tripDestination" value={checklist?.tripDestination || ''} onChange={handleChange} />
-            </div>
-            <div>
-                <label>Trip From Date:</label>
-                <input type="date" name="tripFromDate" value={checklist?.tripFromDate || ''} onChange={handleChange} />
-            </div>
-            <div>
-                <label>Trip To Date:</label>
-                <input type="date" name="tripToDate" value={checklist?.tripToDate || ''} onChange={handleChange} />
-            </div>
-            {/* Button to submit form */}
-            <button type="submit">Submit</button>
-            {/* Button to cancel and go back */}
-            <button type="button" onClick={() => navigate(-1)}>
-                Cancel
-            </button>
-        </form>
+        </div>
     );
 };
 

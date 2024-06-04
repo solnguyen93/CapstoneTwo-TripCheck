@@ -112,7 +112,10 @@ class User {
 
         const user = userRes.rows[0];
 
-        return user || null;
+        if (!user) {
+            throw new NotFoundError(`Username not found: ${username}`);
+        }
+        return user;
     }
 
     // Method to update user data
