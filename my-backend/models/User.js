@@ -1,11 +1,12 @@
-// Demonstrating proficiency with class methods.
-const pool = require('../db');
-const bcrypt = require('bcrypt');
-const { sqlForPartialUpdate } = require('../helpers/sql');
-const { NotFoundError, BadRequestError, UnauthorizedError } = require('../expressError');
+const pool = require('../db'); // Database connection pool
+const bcrypt = require('bcrypt'); // Library for hashing passwords
+const { sqlForPartialUpdate } = require('../helpers/sql'); // Utility function for generating SQL for partial updates
+const { NotFoundError, BadRequestError, UnauthorizedError } = require('../expressError'); // Custom error classes
 
+// Setting the work factor for bcrypt hashing
 const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === 'test' ? 1 : 12;
 
+// Class representing a User with various methods for authentication and user management
 class User {
     // Method to authenticate (login) a user with username and password
     static async login(username, password) {
@@ -37,23 +38,29 @@ class User {
 
     // Method to register a new user
     static async register(name, username, email, password) {
+        // Validation to ensure all required fields are provided
         if (!name || !username || !email || !password) {
-            throw new BadRequestError(
-                `Required fields missing: ${!name ? 'Name,' : ''} ${!username ? 'Username,' : ''} ${!email ? 'Email,' : ''} ${
-                    !password ? 'Password' : ''
-                }`
-            );
-        }
-        // Check for duplicate username or email in the database
-        const duplicateCheck = await pool.query(
-            `SELECT username, email
-             FROM users
-             WHERE username = $1 OR email = $2`,
-            [username, email]
-        );
+            // Construct error message for missing fields
+            const missingFields = [];
+            if (!name) missingFields.push('Name');
+            if (!username) missingFields.push('Username');
+            if (!email) missingFields.push('Email');
+            if (!password) missingFields.push('Password');
 
-        if (duplicateCheck.rows[0]) {
-            throw new BadRequestError(`Duplicate username or email: ${username}, ${email}`); // Throw error if duplicate found
+            const errorMessage = `Required field(s) missing: ${missingFields.join(', ').replace(/,([^,]*)$/, ' and$1')}`;
+            throw new BadRequestError(errorMessage);
+        }
+
+        // Check for duplicate username in the database
+        const usernameCheck = await pool.query(`SELECT username FROM users WHERE username = $1`, [username]);
+        if (usernameCheck.rows[0]) {
+            throw new BadRequestError(`Username is already taken.`); // Throw error if duplicate username found
+        }
+
+        // Check for duplicate email in the database
+        const emailCheck = await pool.query(`SELECT email FROM users WHERE email = $1`, [email]);
+        if (emailCheck.rows[0]) {
+            throw new BadRequestError(`Email is already registered with another user`); // Throw error if duplicate email found
         }
 
         // Hash the password
@@ -85,7 +92,7 @@ class User {
         const users = result.rows;
 
         if (!users.length) {
-            throw new NotFoundError('No users found'); // Throw NotFoundError if no users found
+            throw new NotFoundError('No users found');
         }
 
         return users; // Return an array of user objects

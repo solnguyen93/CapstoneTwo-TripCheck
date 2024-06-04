@@ -1,24 +1,35 @@
 import axios from 'axios';
 
+// Base URL for API requests, using environment variable if available
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
 
+// Class for handling API requests related to TripCheck
 class TripCheckApi {
+    // Function to make a request to the API
     static async request(endpoint, data = {}, method = 'get') {
+        // Log the API call details
         console.debug('API Call:', endpoint, data, method);
 
+        // Construct the full URL for the request
         const url = `${BASE_URL}/${endpoint}`;
-        // Get the token from localStorage
+
+        // Get the token from localStorage for authorization
         const token = localStorage.getItem('token');
         const headers = {
             Authorization: token ? `Bearer ${token}` : undefined, // Include the token if it exists
         };
+
+        // Determine whether to pass data in body or query parameters based on HTTP method
         const params = method === 'get' ? data : {};
 
         try {
+            // Make the request using axios and return the response data
             return (await axios({ url, method, data, params, headers })).data;
         } catch (err) {
+            // Handle errors from the API response
             console.error('API Error:', err.response);
             let message = err.response.data.error.message;
+            // Throw an array of error messages for consistency
             throw Array.isArray(message) ? message : [message];
         }
     }
@@ -27,7 +38,7 @@ class TripCheckApi {
      * Checklist routes
      */
 
-    // ADMIN
+    // ADMIN - Get all checklists
     static async getAllChecklists() {
         try {
             let res = await TripCheckApi.request('checklist/all');
@@ -38,6 +49,7 @@ class TripCheckApi {
         }
     }
 
+    // Get checklists by user ID
     static async getChecklistsByUserId() {
         try {
             let res = await TripCheckApi.request('checklist');
@@ -48,6 +60,7 @@ class TripCheckApi {
         }
     }
 
+    // Get checklist by ID
     static async getChecklistById(checklistId) {
         try {
             let res = await TripCheckApi.request(`checklist/${checklistId}`);
@@ -58,6 +71,7 @@ class TripCheckApi {
         }
     }
 
+    // Edit checklist
     static async editChecklist(newChecklist, checklistId) {
         try {
             let res = await TripCheckApi.request(`checklist/${checklistId}`, newChecklist, 'put');
@@ -68,9 +82,11 @@ class TripCheckApi {
         }
     }
 
+    // Delete checklist by ID
     static async deleteChecklistById(checklistId) {
+        console.log('checklistId in tripcheckapi', checklistId);
         try {
-            let res = await TripCheckApi.request(`checklist/${checklistId}`, 'delete');
+            const res = await TripCheckApi.request(`checklist/${checklistId}`, {}, 'delete');
             return res;
         } catch (error) {
             console.error('Error deleting checklist by id:', error);
@@ -78,6 +94,7 @@ class TripCheckApi {
         }
     }
 
+    // Add checklist
     static async addChecklist(data) {
         try {
             const res = await TripCheckApi.request(`checklist/new`, data, 'post');
@@ -92,6 +109,7 @@ class TripCheckApi {
      * Item routes
      */
 
+    // Get items by checklist ID
     static async getItemsByChecklistId(checklistId) {
         try {
             let res = await TripCheckApi.request(`checklist/${checklistId}/items`);
@@ -102,6 +120,7 @@ class TripCheckApi {
         }
     }
 
+    // Toggle item (check/uncheck)
     static async toggleItem(itemId, checklistId) {
         try {
             let res = await TripCheckApi.request(`checklist/${checklistId}/items/${itemId}`, { type: 'toggle' }, 'put');
@@ -112,6 +131,7 @@ class TripCheckApi {
         }
     }
 
+    // Update item name
     static async updateItemName(itemId, newName, checklistId) {
         try {
             let res = await TripCheckApi.request(`checklist/${checklistId}/items/${itemId}`, { type: 'updateName', newName }, 'put');
@@ -122,6 +142,7 @@ class TripCheckApi {
         }
     }
 
+    // Delete item by ID
     static async deleteItem(itemId, checklistId) {
         try {
             const res = await TripCheckApi.request(`checklist/${checklistId}/items/${itemId}`, {}, 'delete');
@@ -132,6 +153,7 @@ class TripCheckApi {
         }
     }
 
+    // Add item by ID
     static async addItem(data, checklistId) {
         try {
             const res = await TripCheckApi.request(`checklist/${checklistId}/items/new`, data, 'post');

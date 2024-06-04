@@ -10,17 +10,22 @@ const LoginForm = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    // Handle form submission for user login
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Call the login function with username and password
             await login(username, password);
+            // Redirect to the checklist page after successful login
             navigate('/checklist');
         } catch (error) {
+            // Log and display error message if login fails
             console.error('Login error:', error.message);
             setError(error.message);
         }
     };
 
+    // Render the user login form
     return (
         <form onSubmit={handleSubmit}>
             <h3>Log In</h3>

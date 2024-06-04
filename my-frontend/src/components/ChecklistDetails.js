@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useParams } from 'react-router-dom';
-import { formatDateRange } from '../helpers/formatter';
 import TripCheckApi from '../api.js';
 import useDataFetching from '../hooks/useDataFetching';
 import ChecklistItem from './ChecklistItem.js';
@@ -9,7 +8,7 @@ import { useAuth } from '../AuthContext';
 
 const ChecklistDetails = () => {
     const [focusItem, setFocusItem] = useState(null);
-    const { setChecklistId } = useAuth();
+    const { setChecklistId, msg } = useAuth();
     const { checklistId } = useParams();
 
     useEffect(() => {
@@ -258,9 +257,30 @@ const ChecklistDetails = () => {
         });
     };
 
+    // Helper function to handle date range
+    const handleDateRange = (startDateString, endDateString) => {
+        // If both start and end dates are null or empty, return null
+        if (!startDateString && !endDateString) {
+            return null;
+        } else if (!endDateString) {
+            // If end date is null or empty, return only start date
+            return startDateString;
+        } else if (!startDateString) {
+            // If start date is null or empty, return only end date
+            return endDateString;
+        } else if (startDateString === endDateString) {
+            // If start and end dates are the same, return only one date
+            return startDateString;
+        } else {
+            // If both start and end dates are present and different, return date range
+            return `${startDateString} to ${endDateString}`;
+        }
+    };
+
     // Render the ChecklistDetails component
     return (
         <div>
+            {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
             {/* Display checklist details such as title, description, destination, and date */}
             <div className="checklist-details">
                 <h2>{checklist.title}</h2>
@@ -274,9 +294,9 @@ const ChecklistDetails = () => {
                         <strong>Destination:</strong> {checklist.tripDestination}
                     </p>
                 )}
-                {formatDateRange(checklist.tripFromDate, checklist.tripToDate) && (
+                {handleDateRange(checklist.tripFromDate, checklist.tripToDate) && (
                     <p>
-                        <strong>Date:</strong> {formatDateRange(checklist.tripFromDate, checklist.tripToDate)}
+                        <strong>Date:</strong> {handleDateRange(checklist.tripFromDate, checklist.tripToDate)}
                     </p>
                 )}
             </div>
