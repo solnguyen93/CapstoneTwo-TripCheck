@@ -13,7 +13,7 @@ VALUES ('Japan 2024', 'Checklist for packing essentials for a trip', 'Tokyo', '2
 
 -- Associate test user with the trip packing checklist
 INSERT INTO user_checklists (user_id, checklist_id, role)
-VALUES (1, 1, 'Owner');
+VALUES (1, 1, 'owner');
 
 -- Insert items for trip packing checklist
 INSERT INTO items (checklist_id, parent_item_id, name, is_checked, position)

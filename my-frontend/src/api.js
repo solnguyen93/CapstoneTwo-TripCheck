@@ -210,6 +210,28 @@ class TripCheckApi {
             throw error;
         }
     }
+
+    // Update user data
+    static async updateUser(username, data) {
+        try {
+            let res = await TripCheckApi.request(`user/${username}`, data, 'put');
+            return res;
+        } catch (error) {
+            console.error('Error updating user data:', error);
+            throw error;
+        }
+    }
+
+    // Delete user
+    static async deleteUser(username) {
+        try {
+            const res = await TripCheckApi.request(`user/${username}`, {}, 'delete');
+            return res;
+        } catch (error) {
+            console.error('Error updating user data:', error);
+            throw error;
+        }
+    }
 }
 
 export default TripCheckApi;

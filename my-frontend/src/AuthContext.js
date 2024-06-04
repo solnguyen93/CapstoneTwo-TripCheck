@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 
@@ -7,7 +8,10 @@ const AuthContext = createContext();
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(localStorage.getItem('token') || null);
+    const [user, setUser] = useState(() => {
+        const token = localStorage.getItem('token');
+        return token ? jwtDecode(token).user : null;
+    });
     const [checklistId, setChecklistId] = useState(null);
     // State to manage messages displayed to the user
     const [msg, setMsg] = useState({ message: '', type: '' });
@@ -33,6 +37,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', res.data.token);
             // Set the authenticated user in the state
             setUser(res.data.user);
+            setMsg({ message: `Welcome, ${res.data.user.username}! Your account has been successfully created.`, type: 'success' });
         } catch (error) {
             // Display error message if registration fails
             setMsg({ message: error.response.data.message, type: 'danger' });
@@ -48,6 +53,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', res.data.token);
             // Set the authenticated user in the state
             setUser(res.data.user);
+            setMsg({ message: `Welcome back, ${res.data.user.username}`, type: 'success' });
         } catch (error) {
             // Display error message if login fails
             setMsg({ message: error.response.data.message, type: 'danger' });
@@ -61,6 +67,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         // Clear the authenticated user from the state
         setUser(null);
+        setMsg({ message: 'Log out successfully', type: 'success' });
     };
 
     // Provide the authentication context to child components

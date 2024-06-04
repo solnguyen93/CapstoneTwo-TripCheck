@@ -125,42 +125,42 @@ class User {
             data.password = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
         }
 
-        // Generate SQL for partial update
-        const { setCols, values } = sqlForPartialUpdate(data, {
-            name: 'name',
-            email: 'email',
-            password: 'password',
-        });
-        const usernameVarIdx = '$' + (values.length + 1);
+        const { name, email } = data;
 
-        // Perform the update query
-        const querySql = `UPDATE users 
-                      SET ${setCols} 
-                      WHERE username = ${usernameVarIdx} 
-                      RETURNING id, name, username, email`;
-        const result = await pool.query(querySql, [...values, username]);
-        const user = result.rows[0];
+        try {
+            // Update the user in the database
+            const result = await pool.query(
+                `UPDATE users 
+            SET name = $1, email = $2
+            WHERE username = $3
+            RETURNING *`,
+                [name, email, username]
+            );
 
-        if (!user) throw new NotFoundError(`No user: ${username}`); // Throw NotFoundError if user not found
-
-        // For security reasons, remove password from user object before returning
-        delete user.password;
-        return user;
+            // For security reasons, remove password from user object before returning
+            delete result.password;
+            return result;
+        } catch (error) {
+            console.error(`Error editing user:`, error);
+            throw new BadRequestError(`Error editing user:: ${error.message}`);
+        }
     }
 
     // Method to remove a user from the database
-    static async remove(username) {
-        const result = await pool.query(
-            `DELETE
-             FROM users
-             WHERE username = $1
-             RETURNING username`,
-            [username]
-        );
+    static async remove(username, localUsername) {
+        // Check if the requesting user is trying to delete themselves
+        if (username === localUsername) {
+            const result = await pool.query(`DELETE FROM users WHERE username = $1 RETURNING username`, [username]);
 
-        const user = result.rows[0];
+            const user = result.rows[0];
 
-        if (!user) throw new NotFoundError(`No user: ${username}`); // Throw NotFoundError if user not found
+            if (!user) {
+                throw new NotFoundError(`No user: ${username}`); // Throw NotFoundError if user not found
+            }
+        } else {
+            // If the requesting user is not trying to delete themselves, throw an error
+            throw new ForbiddenError("You can't delete other users");
+        }
     }
 }
 

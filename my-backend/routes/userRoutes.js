@@ -1,24 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const { authenticateJWT } = require('../middleware/auth');
 
 /**
  * User routes
  */
 
-// Route to get all users
-router.get('/all', async (req, res) => {
-    try {
-        const users = await User.getAllUsers();
-        res.json(users);
-    } catch (error) {
-        console.error('Error fetching all users:', error);
-        res.status(404).json({ message: error.message });
-    }
-});
-
 // Route to get a user by their username
-router.get('/:username', async (req, res) => {
+router.get('/:username', authenticateJWT, async (req, res) => {
     const { username } = req.params;
     try {
         const user = await User.getUserByUsername(username);
@@ -33,7 +23,7 @@ router.get('/:username', async (req, res) => {
 });
 
 // Route to update user data
-router.put('/:username', async (req, res) => {
+router.put('/:username', authenticateJWT, async (req, res) => {
     const { username } = req.params;
     const data = req.body;
     try {
@@ -46,10 +36,13 @@ router.put('/:username', async (req, res) => {
 });
 
 // Route to remove a user
-router.delete('/:username', async (req, res) => {
+router.delete('/:username', authenticateJWT, async (req, res) => {
     const { username } = req.params;
+    const localUsername = res.locals.user.username;
+    console.log('username', username);
+    console.log('localUsername', localUsername);
     try {
-        await User.remove(username);
+        await User.remove(username, localUsername);
         res.json({ message: 'User removed successfully' });
     } catch (error) {
         console.error('Error removing user:', error);
@@ -58,3 +51,14 @@ router.delete('/:username', async (req, res) => {
 });
 
 module.exports = router;
+
+// ADMIN Route to get all users
+// router.get('/all', authenticateJWT, async (req, res) => {
+//     try {
+//         const users = await User.getAllUsers();
+//         res.json(users);
+//     } catch (error) {
+//         console.error('Error fetching all users:', error);
+//         res.status(404).json({ message: error.message });
+//     }
+// });

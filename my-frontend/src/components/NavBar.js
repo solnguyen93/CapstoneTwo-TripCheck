@@ -41,7 +41,7 @@ const NavBar = () => {
     // Function to navigate to user profile editing page
     const handleProfileEdit = () => {
         setAnchorEl(null);
-        navigate(`/profile/${user}`);
+        navigate(`/user/${user.username}/edit`);
     };
 
     // Function to navigate to checklist creation page
@@ -103,7 +103,7 @@ const NavBar = () => {
                     </div>
                     {/* Render profile and menu options */}
                     <div className="rightNav">
-                        <Link to="/profile">Profile</Link>
+                        <Link to={`/user/${user.username}`}>Profile</Link>
                         {/* Render menu icon */}
                         <IconButton onClick={handleMenuOpen}>
                             <MoreVertIcon />
@@ -116,11 +116,7 @@ const NavBar = () => {
                                     New
                                 </MenuItem>,
                             ]}
-                            {location.pathname === '/profile' && [
-                                <MenuItem key={uuidv4()} onClick={handleProfileEdit}>
-                                    Edit
-                                </MenuItem>,
-                            ]}
+
                             {location.pathname === `/checklist/${checklistId}/items` && [
                                 <MenuItem key={uuidv4()} onClick={handleChecklistEdit}>
                                     Edit

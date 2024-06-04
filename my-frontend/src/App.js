@@ -8,6 +8,8 @@ import NewChecklistForm from './components/NewChecklistForm';
 import AboutMe from './components/AboutMe';
 import TripCheck from './components/TripCheck';
 import EditChecklistForm from './components/EditChecklistForm';
+import EditUserForm from './components/EditUserForm';
+import Profile from './components/Profile';
 
 const App = () => {
     return (
@@ -21,7 +23,9 @@ const App = () => {
                     <Route path="/checklist/new" element={<NewChecklistForm />} />
                     <Route path="/checklist/:checklistId/items" element={<ChecklistDetails />} />
                     <Route path="/checklist/:checklistId/edit" element={<EditChecklistForm />} />
-                    <Route path="*" element={<TripCheck />} />
+                    <Route path="/user/:username" element={<Profile />} />
+                    <Route path="/user/:username/edit" element={<EditUserForm />} />
+                    {/* <Route path="*" element={<TripCheck />} /> */}
                 </Routes>
             </Router>
         </AuthProvider>
