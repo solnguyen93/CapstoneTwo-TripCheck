@@ -3,14 +3,12 @@ import TripCheckApi from '../api.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import useDataFetching from '../hooks/useDataFetching';
 import { useAuth } from '../AuthContext';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import { Box, TextField, Button, Typography, Modal } from '@mui/material';
 
 const EditUserForm = () => {
     const { username } = useParams();
     const navigate = useNavigate();
-    const { msg, setMsg, logout } = useAuth();
+    const { msg, setMsg, setUser, logout } = useAuth();
     const [showConfirmation, setShowConfirmation] = useState(false);
 
     // Fetch checklist data using useDataFetching custom hook
@@ -39,6 +37,7 @@ const EditUserForm = () => {
         try {
             // Call the TripCheckApi method to edit the checklist with the updated data
             await TripCheckApi.updateUser(username, userData);
+            setUser(userData);
             // Display success message upon successful editing
             setMsg({ message: 'User edited successfully', type: 'success' });
             // Redirect to the checklist items page after successful editing
@@ -80,28 +79,28 @@ const EditUserForm = () => {
 
     // Render the edit checklist form
     return (
-        <div>
+        <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 2 }}>
+            {/* Display alert message if present */}
+            {msg.message && (
+                <Typography variant="body2" sx={{ mb: 2, color: msg.type === 'danger' ? 'error.main' : 'success.main' }}>
+                    {msg.message}
+                </Typography>
+            )}
             <form onSubmit={handleSubmit}>
-                {/* Display alert message if present */}
-                {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
-                <div>
-                    <label>Name:</label>
-                    <input type="text" name="name" value={userData?.name || ''} onChange={handleChange} />
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <input type="text" name="email" value={userData?.email || ''} onChange={handleChange} />
-                </div>
+                <TextField fullWidth required label="Name" name="name" value={userData?.name || ''} onChange={handleChange} sx={{ mb: 2 }} />
+                <TextField fullWidth label="Email" name="email" value={userData?.email || ''} onChange={handleChange} sx={{ mb: 2 }} />
                 {/* Button to submit form */}
-                <button type="submit">Submit</button>
+                <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
+                    Submit
+                </Button>
                 {/* Button to cancel and go back */}
-                <button type="button" onClick={() => navigate(-1)}>
+                <Button variant="outlined" onClick={() => navigate(-1)}>
                     Cancel
-                </button>
+                </Button>
                 {/* Button to delete user */}
-                <button type="button" onClick={() => setShowConfirmation(true)}>
+                <Button variant="outlined" onClick={() => setShowConfirmation(true)} sx={{ ml: 2 }}>
                     Delete
-                </button>
+                </Button>
             </form>
             {/* Modal for confirmation dialog */}
             <Modal
@@ -122,13 +121,15 @@ const EditUserForm = () => {
                     }}
                 >
                     {/* Display confirmation message */}
-                    <p id="confirmation-modal-description">Are you sure you want to permanently delete this user?</p>
+                    <Typography variant="body1" id="confirmation-modal-description">
+                        Are you sure you want to permanently delete this user?
+                    </Typography>
                     {/* Render confirmation buttons */}
                     <Button onClick={handleDeleteUser}>Yes</Button>
                     <Button onClick={() => setShowConfirmation(false)}>No</Button>
                 </Box>
             </Modal>
-        </div>
+        </Box>
     );
 };
 

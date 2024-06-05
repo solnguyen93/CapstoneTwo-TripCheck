@@ -11,6 +11,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import '../styles/NavBar.css';
 
 const NavBar = () => {
     const { user, logout, checklistId, msg, setMsg } = useAuth();
@@ -36,12 +37,6 @@ const NavBar = () => {
         setAnchorEl(null);
         logout();
         navigate('/tripcheck');
-    };
-
-    // Function to navigate to user profile editing page
-    const handleProfileEdit = () => {
-        setAnchorEl(null);
-        navigate(`/user/${user.username}/edit`);
     };
 
     // Function to navigate to checklist creation page
@@ -93,7 +88,7 @@ const NavBar = () => {
     };
 
     return (
-        <nav>
+        <nav className="navbar">
             {/* Conditional rendering based on user authentication */}
             {user ? (
                 <>
@@ -103,7 +98,8 @@ const NavBar = () => {
                     </div>
                     {/* Render profile and menu options */}
                     <div className="rightNav">
-                        <Link to={`/user/${user.username}`}>Profile</Link>
+                        <Link to={`/user/${user.username}`}>{user.name.length > 15 ? `${user.name.slice(0, 15)}...` : user.name}</Link>
+
                         {/* Render menu icon */}
                         <IconButton onClick={handleMenuOpen}>
                             <MoreVertIcon />
@@ -116,7 +112,6 @@ const NavBar = () => {
                                     New
                                 </MenuItem>,
                             ]}
-
                             {location.pathname === `/checklist/${checklistId}/items` && [
                                 <MenuItem key={uuidv4()} onClick={handleChecklistEdit}>
                                     Edit

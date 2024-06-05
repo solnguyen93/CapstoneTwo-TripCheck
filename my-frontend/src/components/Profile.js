@@ -3,6 +3,7 @@ import TripCheckApi from '../api.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import useDataFetching from '../hooks/useDataFetching';
 import { useAuth } from '../AuthContext';
+import { Box, Typography, Button } from '@mui/material';
 
 const Profile = () => {
     const { username } = useParams();
@@ -18,29 +19,36 @@ const Profile = () => {
     }
 
     // Render the user profile with user data
-    console.log(username);
     return (
-        <div>
-            {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
+        <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 2 }}>
+            {msg.message && (
+                <Typography variant="body2" sx={{ mb: 2, color: msg.type === 'danger' ? 'error.main' : 'success.main' }}>
+                    {msg.message}
+                </Typography>
+            )}
+
             <div>
-                <label>Name:</label>
-                <div>{userData?.name}</div>
+                <Typography variant="body1">
+                    <strong>Name:</strong> {userData?.name}
+                </Typography>
             </div>
             <div>
-                <label>Username:</label>
-                <div>{userData?.username}</div>
+                <Typography variant="body1">
+                    <strong>Username:</strong> {userData?.username}
+                </Typography>
             </div>
             <div>
-                <label>Email:</label>
-                <div>{userData?.email}</div>
+                <Typography variant="body1">
+                    <strong>Email:</strong> {userData?.email}
+                </Typography>
             </div>
-            <button type="button" onClick={() => navigate(`/user/${username}/edit`)}>
+            <Button variant="contained" color="primary" onClick={() => navigate(`/user/${username}/edit`)} sx={{ mr: 2 }}>
                 Edit
-            </button>
-            <button type="button" onClick={() => navigate(`/checklist`)}>
+            </Button>
+            <Button variant="outlined" onClick={() => navigate(`/checklist`)}>
                 Back
-            </button>
-        </div>
+            </Button>
+        </Box>
     );
 };
 

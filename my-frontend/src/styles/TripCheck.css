@@ -1,0 +1,19 @@
+/* TripCheck.css */
+.paper {
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+.register-button {
+    margin-top: 10px;
+}
+
+.demo-info {
+    text-align: left;
+    margin-top: 20px;
+}

@@ -3,6 +3,7 @@ import TripCheckApi from '../api.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import useDataFetching from '../hooks/useDataFetching';
 import { useAuth } from '../AuthContext';
+import { Box, TextField, Button, Typography } from '@mui/material';
 
 const EditChecklistForm = () => {
     const { checklistId } = useParams();
@@ -72,7 +73,9 @@ const EditChecklistForm = () => {
     const handleDeleteSharedUser = async (checklistId, userId) => {
         try {
             await TripCheckApi.deleteSharedUser(checklistId, userId);
+            console.log('users1', users);
             setUsers((prevState) => prevState.filter((user) => user.id !== userId));
+            console.log('users2', users);
             setMsg({ message: 'Shared user delete successfully', type: 'success' });
         } catch (error) {
             console.error('Shared user delete error:', error.message);
@@ -82,55 +85,94 @@ const EditChecklistForm = () => {
 
     // Render the edit checklist form
     return (
-        <div>
+        <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 2 }}>
             <form onSubmit={handleSubmit}>
                 {/* Display alert message if present */}
-                {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
-                <div>
-                    <label>Title:</label>
-                    <input type="text" name="title" value={checklist?.title || ''} onChange={handleChange} />
-                </div>
-                <div>
-                    <label>Description:</label>
-                    <textarea name="description" value={checklist?.description || ''} onChange={handleChange} />
-                </div>
-                <div>
-                    <label>Trip Destination:</label>
-                    <input type="text" name="tripDestination" value={checklist?.tripDestination || ''} onChange={handleChange} />
-                </div>
-                <div>
-                    <label>Trip From Date:</label>
-                    <input type="date" name="tripFromDate" value={checklist?.tripFromDate || ''} onChange={handleChange} />
-                </div>
-                <div>
-                    <label>Trip To Date:</label>
-                    <input type="date" name="tripToDate" value={checklist?.tripToDate || ''} onChange={handleChange} />
-                </div>
+                {msg.message && (
+                    <Typography variant="body2" sx={{ mb: 2, color: msg.type === 'danger' ? 'error.main' : 'success.main' }}>
+                        {msg.message}
+                    </Typography>
+                )}
+                <TextField fullWidth required label="Title" name="title" value={checklist?.title || ''} onChange={handleChange} sx={{ mb: 2 }} />
+                <TextField
+                    fullWidth
+                    multiline
+                    label="Description"
+                    name="description"
+                    value={checklist?.description || ''}
+                    onChange={handleChange}
+                    sx={{ mb: 2 }}
+                />
+                <TextField
+                    fullWidth
+                    label="Trip Destination"
+                    name="tripDestination"
+                    value={checklist?.tripDestination || ''}
+                    onChange={handleChange}
+                    sx={{ mb: 2 }}
+                />
+                <TextField
+                    fullWidth
+                    type="date"
+                    label="Trip From Date"
+                    name="tripFromDate"
+                    value={checklist?.tripFromDate}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    inputProps={{
+                        placeholder: 'MM/DD/YYYY',
+                    }}
+                    sx={{ mb: 2 }}
+                />
+                <TextField
+                    fullWidth
+                    type="date"
+                    label="Trip To Date"
+                    name="tripToDate"
+                    value={checklist?.tripToDate}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    inputProps={{
+                        placeholder: 'MM/DD/YYYY',
+                    }}
+                    sx={{ mb: 2 }}
+                />
                 {/* Button to submit form */}
-                <button type="submit">Submit</button>
+                <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
+                    Submit
+                </Button>
                 {/* Button to cancel and go back */}
-                <button type="button" onClick={() => navigate(-1)}>
+                <Button variant="outlined" onClick={() => navigate(-1)}>
                     Cancel
-                </button>
+                </Button>
             </form>
             <div>
-                <h2>Shared Users:</h2>
+                <Typography variant="h6" sx={{ mt: 4 }}>
+                    Shared Users:
+                </Typography>
+
                 {users ? (
                     <ul>
                         {users.map((user) => (
-                            <div key={user.id}>
-                                <button type="button" onClick={() => handleDeleteSharedUser(checklistId, user.id)}>
+                            <div key={user.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <Button variant="contained" color="error" size="small" onClick={() => handleDeleteSharedUser(checklistId, user.id)}>
                                     X
-                                </button>
-                                <li>{user.username}</li>
+                                </Button>
+                                <Typography variant="body1" sx={{ ml: 2 }}>
+                                    {user.username}
+                                </Typography>
                             </div>
                         ))}
                     </ul>
                 ) : (
-                    <p>no users</p>
+                    <Typography>No users</Typography>
                 )}
             </div>
-        </div>
+        </Box>
     );
 };
 

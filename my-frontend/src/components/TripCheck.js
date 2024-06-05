@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import { Container, Typography, Button, Box, Alert, Link as MuiLink, Paper } from '@mui/material';
+import '../styles/TripCheck.css'; // Import custom CSS
 
 // Component for the landing page of TripCheck
 const TripCheck = () => {
-    // Access user and message from the AuthContext
-    const { user, msg } = useAuth();
-    // Hook for navigation
-    const navigate = useNavigate();
-    // State variable to toggle between login and register forms
-    const [showRegister, setShowRegister] = useState(false);
+    const { user, msg } = useAuth(); // Access user and message from the AuthContext
+    const navigate = useNavigate(); // Hook for navigation
+    const [showRegister, setShowRegister] = useState(false); // State variable to toggle between login and register forms
 
     // Redirect to checklist page if user is already logged in
     useEffect(() => {
@@ -32,41 +31,45 @@ const TripCheck = () => {
 
     // Render the TripCheck landing page
     return (
-        <div>
-            <h1>Welcome to TripCheck</h1>
-            <div>
+        <Container maxWidth="sm">
+            <Paper elevation={3} className="paper">
+                <Typography variant="h4" component="h1" gutterBottom>
+                    Welcome to TripCheck
+                </Typography>
                 {/* Display any messages from the context */}
-                {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
-                <div>
+                {msg.message && (
+                    <Alert severity={msg.type} className="alert">
+                        {msg.message}
+                    </Alert>
+                )}
+                <Box mt={2}>
                     {/* Render either the login or register form based on state */}
                     {showRegister ? (
                         <>
                             <RegisterForm />
-                            <div>
+                            <Box mt={2}>
                                 {/* Provide link to switch to login form */}
-                                Already have an account? <a onClick={handleAlreadyAccountClick}>Sign In</a>
-                            </div>
+                                Already have an account?{' '}
+                                <MuiLink component="button" variant="body2" onClick={handleAlreadyAccountClick}>
+                                    Sign In
+                                </MuiLink>
+                            </Box>
                         </>
                     ) : (
                         <>
                             <LoginForm />
-                            <p>New to TripCheck?</p>
-                            {/* Display button to switch to register form */}
-                            {!showRegister && <button onClick={handleRegisterClick}>Register</button>}
+                            <Box mt={2}>
+                                <Typography variant="body1">New to TripCheck?</Typography>
+                                {/* Display button to switch to register form */}
+                                <Button variant="contained" color="primary" onClick={handleRegisterClick} className="register-button">
+                                    Register
+                                </Button>
+                            </Box>
                         </>
                     )}
-                </div>
-                <div>
-                    {/* Information for quick access and demo */}
-                    <p>Register your own account or use the credentials below for quick access and demo:</p>
-                    <p>
-                        <strong>Username:</strong> testuser, testuser2, testuser3, testuser4
-                        <br />
-                        <strong>Password:</strong> password
-                    </p>
-                </div>
-            </div>
-        </div>
+                </Box>
+            </Paper>
+        </Container>
     );
 };
 

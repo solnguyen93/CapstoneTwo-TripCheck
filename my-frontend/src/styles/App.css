@@ -1,0 +1,7 @@
+/* In your app.css or any global CSS file */
+.input-editing {
+    border: none; /* Remove the border */
+    outline: none; /* Remove the outline */
+    cursor: text; /* Set the cursor to text */
+    /* Add any additional styling you want */
+}

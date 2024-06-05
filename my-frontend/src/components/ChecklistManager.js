@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import useDataFetching from '../hooks/useDataFetching';
 import TripCheckApi from '../api.js';
 import { useAuth } from '../AuthContext';
+import { Box, Typography, CircularProgress } from '@mui/material';
 
 const ChecklistManager = () => {
     // Fetch checklists data using custom hook
@@ -10,20 +11,26 @@ const ChecklistManager = () => {
     const { msg } = useAuth();
 
     return (
-        <div>
+        <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 2 }}>
             {/* Display alert message if present */}
-            {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
+            {msg.message && (
+                <Typography variant="body2" sx={{ mb: 2, color: `#${msg.type === 'danger' ? 'f44336' : '4caf50'}` }}>
+                    {msg.message}
+                </Typography>
+            )}
             {/* Header for the checklist manager */}
-            <h1>Checklist Manager</h1>
+            <Typography variant="h4" sx={{ mb: 2 }}>
+                Checklist Manager
+            </Typography>
             {/* Display loading message while fetching data */}
             {loading ? (
-                <p>Loading...</p>
+                <CircularProgress />
             ) : (
                 // Render checklists if data is available
-                <div>
+                <Box>
                     {/* Display message if no checklists are available */}
                     {checklists.length === 0 ? (
-                        <p>No checklists available.</p>
+                        <Typography>No checklists available.</Typography>
                     ) : (
                         // Render checklist items as a list of links
                         <ul>
@@ -35,9 +42,9 @@ const ChecklistManager = () => {
                             ))}
                         </ul>
                     )}
-                </div>
+                </Box>
             )}
-        </div>
+        </Box>
     );
 };
 

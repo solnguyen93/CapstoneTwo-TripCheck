@@ -5,6 +5,8 @@ import TripCheckApi from '../api.js';
 import useDataFetching from '../hooks/useDataFetching';
 import ChecklistItem from './ChecklistItem.js';
 import { useAuth } from '../AuthContext';
+import { Box, Typography } from '@mui/material';
+import '../styles/ChecklistDetails.css';
 
 const ChecklistDetails = () => {
     const [focusItem, setFocusItem] = useState(null);
@@ -42,7 +44,7 @@ const ChecklistDetails = () => {
                 // Clear the interval after the click to prevent further clicks
                 clearInterval(intervalId);
             }
-        }, 100);
+        }, 200);
         // Cleanup function to clear the interval when the component unmounts or when `focusItem` changes
         return () => clearInterval(intervalId);
     }, [focusItem]);
@@ -170,9 +172,13 @@ const ChecklistDetails = () => {
             children: [],
             position: newItemPosition,
         };
-        // Update the local state first to reflect the addition of the new item
-        const updatedItems = addNewItemRecursively(items, newItem, currentItem);
-        setItems(updatedItems);
+        // Update the local state first to reflect the addition of the new sub-item
+        setItems((prevItems) => {
+            // Update the items state with the new sub-item added
+            const updatedItems = addNewItemRecursively(prevItems, newItem, currentItem);
+            return updatedItems;
+        });
+
         // Make an API call to add the new item to the database
         TripCheckApi.addItem({ ...newItem, id: null }, checklistId)
             .then((res) => {
@@ -198,13 +204,12 @@ const ChecklistDetails = () => {
             parent_item_id: currentItem.id, // Set parent_item_id to the id of the current item
             is_checked: false,
             children: [],
-            position: 0, // You can set the position as needed
+            position: 0,
         };
 
         // Update the local state to reflect the addition of the new item
         const updatedItems = addNewItemRecursively(items, newItem, currentItem);
         setItems(updatedItems);
-
         // Make an API call to add the new item to the database
         TripCheckApi.addItem({ ...newItem, id: null }, checklistId)
             .then((res) => {
@@ -212,9 +217,10 @@ const ChecklistDetails = () => {
                 // Fetch the updated list of items from the database
                 return TripCheckApi.getItemsByChecklistId(checklistId);
             })
-            .then((updatedItems) => {
+            .then((fetchItems) => {
                 // Update the items state with the updated list of items
-                setItems(updatedItems);
+                setItems(fetchItems);
+                // Set the focus to the newly added item
                 console.log('New sub item added successfully.');
             })
             .catch((error) => {
@@ -279,30 +285,38 @@ const ChecklistDetails = () => {
 
     // Render the ChecklistDetails component
     return (
-        <div>
-            {msg.message && <div className={`alert alert-${msg.type}`}>{msg.message}</div>}
+        <Box className="checklist-details-container">
+            {msg.message && (
+                <Typography variant="body2" sx={{ mb: 2, color: msg.type === 'danger' ? 'error.main' : 'success.main' }}>
+                    {msg.message}
+                </Typography>
+            )}
             {/* Display checklist details such as title, description, destination, and date */}
             <div className="checklist-details">
-                <h2>{checklist.title}</h2>
+                <Typography variant="h4" sx={{ mb: 2 }}>
+                    {checklist.title}
+                </Typography>
                 {checklist.description && (
-                    <p>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
                         <strong>Description:</strong> {checklist.description}
-                    </p>
+                    </Typography>
                 )}
                 {checklist.tripDestination && (
-                    <p>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
                         <strong>Destination:</strong> {checklist.tripDestination}
-                    </p>
+                    </Typography>
                 )}
                 {handleDateRange(checklist.tripFromDate, checklist.tripToDate) && (
-                    <p>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
                         <strong>Date:</strong> {handleDateRange(checklist.tripFromDate, checklist.tripToDate)}
-                    </p>
+                    </Typography>
                 )}
             </div>
             {/* Render checklist items */}
-            <div className="checklist-items">
-                <ul>
+            <div>
+                <ul className="checklist-items-list">
+                    {' '}
+                    {/* Apply CSS class */}
                     {items.map((item) => (
                         <ChecklistItem
                             key={item.id}
@@ -317,7 +331,7 @@ const ChecklistDetails = () => {
                     ))}
                 </ul>
             </div>
-        </div>
+        </Box>
     );
 };
 

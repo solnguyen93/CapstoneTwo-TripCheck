@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const ChecklistItem = ({ item, onToggle, onEditName, onDeleteItem, onAddNewItem, onAddNewSubItem, itemCount }) => {
     // Destructure item object to get id, name, and is_checked properties
@@ -7,6 +9,11 @@ const ChecklistItem = ({ item, onToggle, onEditName, onDeleteItem, onAddNewItem,
     // State to manage editing mode and edited name
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(name);
+    const [isExpanded, setIsExpanded] = useState(true);
+
+    const handleToggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
 
     // Event handler for toggling checkbox
     const handleToggleClick = () => {
@@ -24,25 +31,37 @@ const ChecklistItem = ({ item, onToggle, onEditName, onDeleteItem, onAddNewItem,
     };
 
     // Event handler for blurring the input field (when it loses focus)
-    const handleNameBlur = () => {
-        // Delay handling the blur event to ensure the button click function executes first
-        setTimeout(() => {
-            setIsEditing(false);
-            const updatedName = editedName.trim();
-            if (updatedName !== name) {
-                onEditName(id, updatedName);
-            }
-        }, 200);
+    const handleNameBlur = (e) => {
+        // Check if the related target of the blur event is the "+" button
+        if (e.relatedTarget && e.relatedTarget.classList.contains('add-sub-item-button')) {
+            // If the related target is the "+" button, prevent the default behavior of the blur event
+            e.preventDefault();
+        } else {
+            // If the related target is not the "+" button, proceed with handling the blur event
+            setTimeout(() => {
+                const updatedName = editedName.trim();
+                if (updatedName !== name) {
+                    onEditName(id, updatedName);
+                }
+                setIsEditing(false);
+            }, 200);
+        }
+    };
+
+    const handleNewSubItem = async () => {
+        const updatedName = editedName.trim();
+        if (updatedName !== name) {
+            console.log('updatedName', updatedName);
+            await onEditName(id, updatedName);
+        }
+        await onAddNewSubItem(item);
+        setIsEditing(false);
     };
 
     // Event handler for key press events
     const handleKeyPress = (e) => {
-        // Check if Tab key is pressed
-        if (e.key === 'Tab') {
-            // Call onAddNewSubItem to add a new sub item temporarily
-            onAddNewSubItem(item);
-            // Check if Enter key is pressed
-        } else if (e.key === 'Enter') {
+        // Check if Enter key is pressed
+        if (e.key === 'Enter') {
             // Call onAddNewItem to add a new item temporarily
             onAddNewItem(item);
             // Check if Backspace key is pressed and the editedName is empty
@@ -65,27 +84,46 @@ const ChecklistItem = ({ item, onToggle, onEditName, onDeleteItem, onAddNewItem,
 
     return (
         <li key={item.id}>
+            {/* Icon for expanding/collapsing nested children */}
+            {item.children && item.children.length > 0 && (
+                // Icon to toggle expand/collapse state
+                <FontAwesomeIcon icon={isExpanded ? faChevronDown : faChevronRight} onClick={handleToggleExpand} className="toggle-icon" />
+            )}
             {/* Checkbox for marking item as checked/unchecked */}
             <label className="item-checkbox">
+                {/* Checkbox input */}
                 <input type="checkbox" checked={is_checked} onChange={handleToggleClick} />
             </label>
             {/* If currently editing item or not */}
             {isEditing ? (
-                <div>
+                // Editing mode: input field and add sub-item button
+                <>
                     {/* Input field for editing the name of the item */}
-                    <input type="text" value={editedName} onChange={handleNameChange} onBlur={handleNameBlur} onKeyDown={handleKeyPress} autoFocus />
+                    <input
+                        type="text"
+                        className={isEditing ? 'input-editing' : ''}
+                        value={editedName}
+                        onChange={handleNameChange}
+                        onBlur={handleNameBlur}
+                        onKeyDown={handleKeyPress}
+                        autoFocus
+                    />
                     {/* Button to add a new sub-item */}
-                    <button onClick={() => onAddNewSubItem(item)}>Add Sub Item</button>
-                </div>
+                    <button className="add-sub-item-button" onClick={() => handleNewSubItem(item)}>
+                        +
+                    </button>
+                </>
             ) : (
-                // Label for displaying name and enabling editing on click
+                // Display mode: label for name
                 <label id={item.id} className="item-name" onClick={handleNameClick}>
+                    {/* Item name */}
                     {name} <span style={{ visibility: 'hidden' }}>Empty Click Area</span>
                 </label>
             )}
-            {/* Render children items recursively if they exist */}
-            {item.children && item.children.length > 0 && (
+            {/* Render children items if expanded */}
+            {isExpanded && item.children && item.children.length > 0 && (
                 <ul>
+                    {/* Recursively render children */}
                     {item.children.map((child) => (
                         <ChecklistItem
                             key={child.id}
