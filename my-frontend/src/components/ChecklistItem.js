@@ -51,7 +51,6 @@ const ChecklistItem = ({ item, onToggle, onEditName, onDeleteItem, onAddNewItem,
     const handleNewSubItem = async () => {
         const updatedName = editedName.trim();
         if (updatedName !== name) {
-            console.log('updatedName', updatedName);
             await onEditName(id, updatedName);
         }
         await onAddNewSubItem(item);
