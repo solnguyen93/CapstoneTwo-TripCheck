@@ -28,27 +28,31 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
 
                 const weatherUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${destination}/${date1}/${date2}?key=${WEATHER_API_KEY}`;
                 const weatherResponse = await axios.get(weatherUrl);
-                setWeatherData(weatherResponse.data);
+                // Check if weather data is found
+                if (weatherResponse.data.resolvedAddress === 'Not Found') {
+                    setWeatherData(null); // Set weather data to null
+                } else {
+                    setWeatherData(weatherResponse.data);
 
-                // Extract country name from weather data
-                const { resolvedAddress } = weatherResponse.data;
-                const addressParts = resolvedAddress.split(',');
-                const countryName = addressParts[addressParts.length - 1].trim();
+                    // Extract country name from weather data
+                    const { resolvedAddress } = weatherResponse.data;
+                    const addressParts = resolvedAddress.split(',');
+                    const countryName = addressParts[addressParts.length - 1].trim();
 
-                // Format country name for API request
-                const formattedCountry = countryName.replace(/\s/g, '-');
+                    // Format country name for API request
+                    const formattedCountry = countryName.replace(/\s/g, '-');
 
-                // Fetch currency code using country name
-                const currencyCode = await getCurrencyCode(formattedCountry);
+                    // Fetch currency code using country name
+                    const currencyCode = await getCurrencyCode(formattedCountry);
 
-                // Fetch currency exchange rates using currency code
-                const currencyUrl = `https://v6.exchangerate-api.com/v6/2f1cb4da54518ebe578cfa09/pair/USD/${currencyCode}`;
-                const currencyResponse = await axios.get(currencyUrl);
-                const currencyString = `${currencyResponse.data.conversion_rate} ${currencyResponse.data.target_code}`;
-                setCurrency(currencyString);
-
-                // Set loading to false after fetching all data
-                setLoading(false);
+                    // Fetch currency exchange rates using currency code
+                    const currencyUrl = `https://v6.exchangerate-api.com/v6/2f1cb4da54518ebe578cfa09/pair/USD/${currencyCode}`;
+                    const currencyResponse = await axios.get(currencyUrl);
+                    const currencyString = `${currencyResponse.data.conversion_rate} ${currencyResponse.data.target_code}`;
+                    setCurrency(currencyString);
+                    // Set loading to false after fetching all data
+                    setLoading(false);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setLoading(false);
@@ -96,8 +100,8 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
     return (
         <>
             {currency !== '1 USD' && (
-                <div lassName="currency">
-                    <strong>Currency Exchange Rates:</strong> {currency} (1 USD)
+                <div className="currency">
+                    <strong>Date:</strong> {currency} (1 USD)
                 </div>
             )}
             {loading ? (
@@ -110,7 +114,9 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
                                 <div key={index} className="weather-card">
                                     <div>{formatDate(day.date)}</div>
                                     <div className="high-temp">{day.maxTemperature}°</div>
-                                    <img src={require(`../weather-icons/${day.icon}.png`)} alt="Weather Icon" className="weather-icon" />
+                                    {day.icon !== '' && ( // Check if icon is not an empty string
+                                        <img src={require(`../weather-icons/${day.icon}.png`)} alt="Weather Icon" className="weather-icon" />
+                                    )}
                                     <div className="low-temp">{day.minTemperature}°</div>
                                 </div>
                             ))}
