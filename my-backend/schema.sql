@@ -1,3 +1,9 @@
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS user_checklists;
+DROP TABLE IF EXISTS checklists;
+DROP TABLE IF EXISTS users;
+
 -- Create Users Table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,

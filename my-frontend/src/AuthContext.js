@@ -5,8 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 const AuthContext = createContext();
 
 // Define the base URL for API requests
-const isProduction = process.env.NODE_ENV === 'production';
-const BASE_URL = isProduction ? process.env.REACT_APP_BASE_URL : 'http://localhost:5000';
+const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
