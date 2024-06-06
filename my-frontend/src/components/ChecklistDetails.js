@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import TripCheckApi from '../api.js';
 import useDataFetching from '../hooks/useDataFetching';
 import ChecklistItem from './ChecklistItem.js';
+import HelpfulTips from './HelpfulTips.js';
 import { useAuth } from '../AuthContext';
 import { Box, Typography } from '@mui/material';
 import '../styles/ChecklistDetails.css';
@@ -311,11 +312,13 @@ const ChecklistDetails = () => {
                         <strong>Date:</strong> {handleDateRange(checklist.tripFromDate, checklist.tripToDate)}
                     </Typography>
                 )}
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                    <HelpfulTips destination={checklist.tripDestination} fromDate={checklist.tripFromDate} toDate={checklist.tripToDate} />
+                </Typography>
             </div>
             {/* Render checklist items */}
-            <div>
+            <div className="checklist-items-container">
                 <ul className="checklist-items-list">
-                    {' '}
                     {/* Apply CSS class */}
                     {items.map((item) => (
                         <ChecklistItem

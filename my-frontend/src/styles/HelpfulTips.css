@@ -1,0 +1,48 @@
+.weather-slider {
+    width: 600px;
+}
+
+.weather-slider-inner {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.weather-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-right: 16px;
+    text-align: center;
+    position: relative;
+    min-width: 60px;
+    min-height: 120px;
+}
+
+.weather-icon {
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    position: absolute;
+    right: 25%;
+    bottom: 20%;
+}
+
+.high-temp,
+.low-temp {
+    position: absolute;
+    width: 100%;
+    right: 0px;
+}
+
+.high-temp {
+    font-size: 16px;
+    top: 50px;
+    font-weight: bold;
+}
+
+.low-temp {
+    font-size: 14px;
+    bottom: 5px;
+}

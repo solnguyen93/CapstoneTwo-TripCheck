@@ -37,3 +37,8 @@ ul {
 .add-sub-item-button:hover {
     background-color: #6c6c6c;
 }
+
+.checklist-items-container {
+    max-width: 600px;
+    margin: 0 auto;
+}

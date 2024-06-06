@@ -1,6 +1,6 @@
 # TripCheck
 
-TripCheck utilizes a tree-based data structure and recursive algorithms to handle nested items and their relationships. With this, users can put items inside other items in their checklists, making it easier to organize and find things. The app integrates various APIs to enhance the travel planning experience with weather forecasts, currency exchange rates, and visa requirements.
+TripCheck utilizes a tree-based data structure and recursive algorithms to handle nested items and their relationships. With this, users can put items inside other items in their checklists, making it easier to organize and find things. The app integrates various APIs to enhance the travel planning experience with weather forecasts, and currency exchange rates.
 Click [Here](https://murmuring-badlands-95097-dad2a55dc986.herokuapp.com) to explore TripCheck or follow the guide below for setup.
 
 ## Usage Tips
@@ -130,12 +130,12 @@ Link to Schema: [Schema](https://github.com/solnguyen93/CapstoneTwo/blob/main/Ca
 
 -   [Restful Countries Api](https://restfulcountries.com/api-documentation/version/1) for country data
 -   [ExchangeRate-Api](https://www.exchangerate-api.com/docs/overview) for currency rates
--   [OpenWeather](https://openweathermap.org/) for weather predictions
--   [Google Maps Platform](https://developers.google.com/maps/documentation/) for autocomplete functionality for destinations
+-   [VisualCrossing](https://www.visualcrossing.com/weather-api) for weather predictions
+-   [Google Maps Platform](https://developers.google.com/maps/documentation/) for autocomplete functionality for destinations (Coming soon)
 
 #### Websites:
 
--   [visahq.com](https://www.visahq.com/) for visa prerequisites
+-   [visahq.com](https://www.visahq.com/) for visa prerequisites (Coming soon)
 
 #### Key Features:
 
