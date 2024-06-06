@@ -1,6 +1,17 @@
 # TripCheck
 
-TripCheck is a comprehensive application designed to help users manage their travel checklists. It provides functionalities to create and manage checklists for different trips, ensuring that users don't forget any important items. The app integrates various APIs to enhance the travel planning experience with weather forecasts, currency exchange rates, and visa requirements.
+TripCheck utilizes a tree-based data structure and recursive algorithms to handle nested items and their relationships. With this, users can put items inside other items in their checklists, making it easier to organize and find things. The app integrates various APIs to enhance the travel planning experience with weather forecasts, currency exchange rates, and visa requirements.
+Click [Here](https://murmuring-badlands-95097-dad2a55dc986.herokuapp.com) to explore TripCheck or follow the guide below for setup.
+
+## Usage Tips
+
+-   **Edit, Share, or Delete**: Click on the checklist, then click on the three-dot icon and select the desired action.
+-   **New Checklist**: Click on the three-dot icon and select 'New'.
+-   **Edit Item Name**: Click on the item name.
+-   While editing the item name:
+    -   Press `Enter` to add a new item.
+    -   Press `Backspace` to delete item.
+    -   Click the `(+)` icon to add a sub-item (nest items).
 
 ## Getting Started
 
