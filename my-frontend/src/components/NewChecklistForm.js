@@ -29,6 +29,12 @@ const NewChecklistForm = () => {
             setMsg({ message: 'Title cannot be empty', type: 'danger' });
             return;
         }
+        // Check if toDate is before fromDate
+        if (new Date(newChecklist.tripToDate) < new Date(newChecklist.tripFromDate)) {
+            // Display error message if toDate is before fromDate
+            setMsg({ message: 'Trip To Date cannot be before Trip From Date', type: 'danger' });
+            return;
+        }
         try {
             // Call the TripCheckApi method to create a new checklist
             const res = await TripCheckApi.addChecklist(newChecklist);

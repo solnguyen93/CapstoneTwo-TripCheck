@@ -18,15 +18,7 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
         const fetchData = async () => {
             try {
                 // Fetch weather data
-                const currentDate = new Date();
-                const thirtyDaysAhead = new Date(currentDate);
-                thirtyDaysAhead.setDate(currentDate.getDate() + 30);
-
-                const isWithinMonth = new Date(fromDate) <= thirtyDaysAhead;
-                const date1 = isWithinMonth ? fromDate : toDate;
-                const date2 = isWithinMonth ? toDate : null;
-
-                const weatherUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${destination}/${date1}/${date2}?key=${WEATHER_API_KEY}`;
+                const weatherUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${destination}/${fromDate}/${toDate}?key=${WEATHER_API_KEY}`;
                 const weatherResponse = await axios.get(weatherUrl);
                 // Check if weather data is found
                 if (weatherResponse.data.resolvedAddress === 'Not Found') {

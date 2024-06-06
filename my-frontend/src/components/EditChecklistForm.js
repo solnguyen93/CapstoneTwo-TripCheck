@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TripCheckApi from '../api.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import useDataFetching from '../hooks/useDataFetching';
@@ -44,6 +44,11 @@ const EditChecklistForm = () => {
         // Validate if the checklist title is empty
         if (!checklist.title.trim()) {
             setMsg({ message: 'Title cannot be empty', type: 'danger' });
+            return;
+        }
+        // Validate if toDate is before fromDate
+        if (checklist.tripFromDate && checklist.tripToDate && new Date(checklist.tripToDate) < new Date(checklist.tripFromDate)) {
+            setMsg({ message: 'Trip To Date cannot be before Trip From Date', type: 'danger' });
             return;
         }
         try {
