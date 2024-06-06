@@ -93,7 +93,7 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
         <>
             {currency !== '1 USD' && (
                 <div className="currency">
-                    <strong>Date:</strong> {currency} (1 USD)
+                    <strong>Currency Exchange Rate:</strong> {currency} (1 USD)
                 </div>
             )}
             {loading ? (
