@@ -5,9 +5,9 @@ import '../styles/HelpfulTips.css';
 
 const HelpfulTips = ({ destination, fromDate, toDate }) => {
     // API keys
-    const COUNTRY_API_KEY = 'T5Tq42LGJZwm1f0UHUXfCfJFaGhtSHrVz7JbwH8X';
-    const WEATHER_API_KEY = 'JT9SMSDCTAWQK875DJEFEXA5F';
-
+    const COUNTRY_API_KEY = process.env.REACT_APP_COUNTRY_API_KEY;
+    const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
+    console.log('kjey', COUNTRY_API_KEY);
     // State variables
     const [loading, setLoading] = useState(true);
     const [currency, setCurrency] = useState(null);
@@ -86,6 +86,7 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
+        date.setDate(date.getDate() + 1);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
