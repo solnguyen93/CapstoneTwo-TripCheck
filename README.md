@@ -1,7 +1,7 @@
 # TripCheck
 
 TripCheck utilizes a tree-based data structure and recursive algorithms to handle nested items and their relationships. With this, users can put items inside other items in their checklists, making it easier to organize and find things. The app integrates various APIs to enhance the travel planning experience with weather forecasts, and currency exchange rates.
-Click [Here](https://tripcheck-5f672ed9318e.herokuapp.com/) to explore TripCheck or follow the guide below for setup.
+Click [Here](https://tripcheck.onrender.com) to explore TripCheck or follow the guide below for setup.
 
 ## Usage Tips
 
