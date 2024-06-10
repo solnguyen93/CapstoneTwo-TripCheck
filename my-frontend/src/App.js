@@ -25,7 +25,7 @@ const App = () => {
                     <Route path="/checklist/:checklistId/edit" element={<EditChecklistForm />} />
                     <Route path="/user/:username" element={<Profile />} />
                     <Route path="/user/:username/edit" element={<EditUserForm />} />
-                    {/* <Route path="*" element={<TripCheck />} /> */}
+                    <Route path="*" element={<TripCheck />} />
                 </Routes>
             </Router>
         </AuthProvider>

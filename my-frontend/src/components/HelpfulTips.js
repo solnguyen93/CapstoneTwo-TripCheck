@@ -7,7 +7,7 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
     // API keys
     const COUNTRY_API_KEY = process.env.REACT_APP_COUNTRY_API_KEY;
     const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
-    console.log('kjey', COUNTRY_API_KEY);
+
     // State variables
     const [loading, setLoading] = useState(true);
     const [currency, setCurrency] = useState(null);
@@ -20,34 +20,48 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
                 // Fetch weather data
                 const weatherUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${destination}/${fromDate}/${toDate}?key=${WEATHER_API_KEY}`;
                 const weatherResponse = await axios.get(weatherUrl);
-                // Check if weather data is found
-                if (weatherResponse.data.resolvedAddress === 'Not Found') {
-                    setWeatherData(null); // Set weather data to null
-                } else {
-                    setWeatherData(weatherResponse.data);
 
-                    // Extract country name from weather data
-                    const { resolvedAddress } = weatherResponse.data;
-                    const addressParts = resolvedAddress.split(',');
-                    const countryName = addressParts[addressParts.length - 1].trim();
+                console.log('Resolved Address:', weatherResponse.data.resolvedAddress);
+                console.log('Destination:', destination);
 
-                    // Format country name for API request
-                    const formattedCountry = countryName.replace(/\s/g, '-');
+                // Split resolved address by commas
+                const resolvedParts = weatherResponse.data.resolvedAddress
+                    .toLowerCase()
+                    .split(',')
+                    .map((part) => part.trim());
 
-                    // Fetch currency code using country name
-                    const currencyCode = await getCurrencyCode(formattedCountry);
+                // Check if resolved address contains only one part (likely a country)
+                if (resolvedParts.length > 1) {
+                    // Check if weather data is found and if any part of the resolved address matches any part of the destination
+                    const destinationParts = destination.split(',').map((part) => part.trim().toLowerCase());
+                    const match = destinationParts.some((part) => resolvedParts.includes(part));
+                    if (match) {
+                        setWeatherData(weatherResponse.data);
+                    }
+                }
 
-                    // Fetch currency exchange rates using currency code
+                // Always fetch currency data regardless of weather data
+                // Extract country name from weather data
+                const { resolvedAddress } = weatherResponse.data;
+                const addressParts = resolvedAddress.split(',');
+                const countryName = addressParts[addressParts.length - 1].trim();
+                const formattedCountry = countryName.replace(/\s/g, '-');
+
+                // Fetch currency code using country name
+                const currencyCode = await getCurrencyCode(formattedCountry);
+
+                // Fetch currency exchange rates using currency code
+                if (currencyCode) {
                     const currencyUrl = `https://v6.exchangerate-api.com/v6/2f1cb4da54518ebe578cfa09/pair/USD/${currencyCode}`;
                     const currencyResponse = await axios.get(currencyUrl);
                     const currencyString = `${currencyResponse.data.conversion_rate} ${currencyResponse.data.target_code}`;
                     setCurrency(currencyString);
-                    // Set loading to false after fetching all data
-                    setLoading(false);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setLoading(false);
+            } finally {
+                setLoading(false); // Set loading to false after trying to fetch data
             }
         };
 
@@ -92,7 +106,7 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
 
     return (
         <>
-            {currency !== '1 USD' && (
+            {currency && currency !== '1 USD' && (
                 <div className="currency">
                     <strong>Currency Exchange Rate:</strong> {currency} (1 USD)
                 </div>
