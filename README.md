@@ -19,7 +19,6 @@ To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
--   Install Python 3.8 or higher: [Python Installation Guide](https://www.python.org/downloads/)
 -   Install PostgreSQL: [PostgreSQL Installation Guide](https://www.postgresql.org/download/)
 -   Install Node.js and npm: [Node.js Installation Guide](https://nodejs.org/)
 
