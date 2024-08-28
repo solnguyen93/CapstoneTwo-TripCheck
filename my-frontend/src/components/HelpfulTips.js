@@ -32,6 +32,9 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
                     .split(',')
                     .map((part) => part.trim());
 
+                
+                console.log('resolvedParts:', resolvedParts);
+
                 // Check if resolved address contains only one part (likely a country)
                 if (resolvedParts.length > 1) {
                     // Check if weather data is found and if any part of the resolved address matches any part of the destination
