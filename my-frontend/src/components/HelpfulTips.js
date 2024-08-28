@@ -26,6 +26,8 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
 
                 // Split resolved address by commas
                 const resolvedParts = weatherResponse.data.resolvedAddress
+                    .normalize("NFD") // Normalize the string to separate diacritics from letters
+                    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
                     .toLowerCase()
                     .split(',')
                     .map((part) => part.trim());
@@ -47,6 +49,9 @@ const HelpfulTips = ({ destination, fromDate, toDate }) => {
                 const countryName = addressParts[addressParts.length - 1].trim();
                 const formattedCountry = countryName.replace(/\s/g, '-');
 
+                console.log('Resolved Address:', resolvedAddress);
+                console.log('Destination:', destination);
+                
                 // Fetch currency code using country name
                 const currencyCode = await getCurrencyCode(formattedCountry);
 
