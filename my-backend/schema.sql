@@ -10,7 +10,8 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL
+    password VARCHAR(100) NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Create Checklists Table

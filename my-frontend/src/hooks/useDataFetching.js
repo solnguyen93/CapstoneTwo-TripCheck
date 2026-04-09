@@ -19,6 +19,7 @@ function useDataFetching(fetchFunction, ...args) {
             } catch (error) {
                 // Log any errors that occur during data fetching
                 console.error('Error fetching data:', error);
+                setLoading(false);
             }
         }
 

@@ -112,7 +112,7 @@ class TripCheckApi {
             return res;
         } catch (error) {
             console.error('Error getting user:', error);
-            throw new Error(error.response.data.message || 'Error getting user');
+            throw new Error(error.response?.data?.message || 'Error getting user');
         }
     }
 

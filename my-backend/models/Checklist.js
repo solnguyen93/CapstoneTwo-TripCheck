@@ -368,6 +368,7 @@ const buildTree = async (items, parentId = null) => {
 
 // Exporting functions for use in other modules
 module.exports = {
+    getAllChecklists,
     getChecklistById,
     getChecklistsByUserId,
     editChecklist,
@@ -383,12 +384,12 @@ module.exports = {
     addItem,
 };
 
-// const getAllChecklists = async () => {
-//     try {
-//         const result = await pool.query('SELECT * FROM checklists');
-//         return result.rows;
-//     } catch (error) {
-//         console.error('Error fetching all checklists:', error);
-//         throw new BadRequestError(`Error fetching all checklists: ${error.message}`);
-//     }
-// };
+const getAllChecklists = async () => {
+    try {
+        const result = await pool.query('SELECT * FROM checklists ORDER BY id');
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching all checklists:', error);
+        throw new BadRequestError(`Error fetching all checklists: ${error.message}`);
+    }
+};

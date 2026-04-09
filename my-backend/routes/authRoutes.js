@@ -10,7 +10,7 @@ router.post('/register', ensureNotLoggedIn, async (req, res) => {
     try {
         const user = await User.register(name, username, email, password);
         // Create JWT token for authentication
-        const token = jwt.sign({ user: { id: user.id, name: user.name, username: user.username, email: user.email } }, process.env.JWT_SECRET);
+        const token = jwt.sign({ user: { id: user.id, name: user.name, username: user.username, email: user.email, isAdmin: user.isAdmin } }, process.env.JWT_SECRET);
         res.json({ user, token });
     } catch (err) {
         console.error(err.message);
@@ -25,7 +25,7 @@ router.post('/login', ensureNotLoggedIn, async (req, res) => {
     try {
         const user = await User.login(email, password);
         // Create JWT token for authentication
-        const token = jwt.sign({ user: { id: user.id, name: user.name, username: user.username, email: user.email } }, process.env.JWT_SECRET);
+        const token = jwt.sign({ user: { id: user.id, name: user.name, username: user.username, email: user.email, isAdmin: user.isAdmin } }, process.env.JWT_SECRET);
 
         res.json({ user, token });
     } catch (err) {

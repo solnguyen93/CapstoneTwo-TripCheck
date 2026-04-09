@@ -1,7 +1,7 @@
 const pool = require('../db'); // Database connection pool
 const bcrypt = require('bcrypt'); // Library for hashing passwords
 const { sqlForPartialUpdate } = require('../helpers/sql'); // Utility function for generating SQL for partial updates
-const { NotFoundError, BadRequestError, UnauthorizedError } = require('../expressError'); // Custom error classes
+const { NotFoundError, BadRequestError, UnauthorizedError, ForbiddenError } = require('../expressError'); // Custom error classes
 
 // Setting the work factor for bcrypt hashing
 const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === 'test' ? 1 : 12;
@@ -16,7 +16,8 @@ class User {
                     username,
                     password,
                     name,
-                    email
+                    email,
+                    is_admin AS "isAdmin"
              FROM users
              WHERE username = $1`,
             [username]
@@ -104,7 +105,8 @@ class User {
             `SELECT id,
                     name,
                     username,
-                    email
+                    email,
+                    is_admin AS "isAdmin"
              FROM users
              WHERE username = $1`,
             [username]
@@ -122,24 +124,28 @@ class User {
     static async update(username, data) {
         // Hash new password if provided in the update data
         if (data.password) {
-            data.password = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+            data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
         }
 
-        const { name, email } = data;
+        const { name, email, password: hashedPass } = data;
 
         try {
             // Update the user in the database
             const result = await pool.query(
-                `UPDATE users 
-            SET name = $1, email = $2
-            WHERE username = $3
+                `UPDATE users
+            SET name = $1, email = $2, password = COALESCE($3, password)
+            WHERE username = $4
             RETURNING *`,
-                [name, email, username]
+                [name, email, hashedPass || null, username]
             );
 
+            if (!result.rows[0]) {
+                throw new NotFoundError(`No user: ${username}`);
+            }
+
             // For security reasons, remove password from user object before returning
-            delete result.password;
-            return result;
+            delete result.rows[0].password;
+            return result.rows[0];
         } catch (error) {
             console.error(`Error editing user:`, error);
             throw new BadRequestError(`Error editing user:: ${error.message}`);

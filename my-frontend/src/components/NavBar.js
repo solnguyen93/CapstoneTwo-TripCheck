@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import TripCheckApi from '../api.js';
-import { v4 as uuidv4 } from 'uuid';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
@@ -108,23 +107,23 @@ const NavBar = () => {
                         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
                             {/* Conditional rendering based on current page */}
                             {location.pathname === '/checklist' && [
-                                <MenuItem key={uuidv4()} onClick={handleCreateNewChecklist}>
+                                <MenuItem key="new" onClick={handleCreateNewChecklist}>
                                     New
                                 </MenuItem>,
                             ]}
                             {location.pathname === `/checklist/${checklistId}/items` && [
-                                <MenuItem key={uuidv4()} onClick={handleChecklistEdit}>
+                                <MenuItem key="edit" onClick={handleChecklistEdit}>
                                     Edit
                                 </MenuItem>,
-                                <MenuItem key={uuidv4()} onClick={() => handleAction('share')}>
+                                <MenuItem key="share" onClick={() => handleAction('share')}>
                                     Share
                                 </MenuItem>,
-                                <MenuItem key={uuidv4()} onClick={() => handleAction('delete')}>
+                                <MenuItem key="delete" onClick={() => handleAction('delete')}>
                                     Delete
                                 </MenuItem>,
                             ]}
                             {/* Render logout menu item */}
-                            <MenuItem key={uuidv4()} onClick={handleLogOut}>
+                            <MenuItem key="logout" onClick={handleLogOut}>
                                 Log out
                             </MenuItem>
                         </Menu>

@@ -1,5 +1,5 @@
 const express = require('express');
-const { authenticateJWT } = require('../middleware/auth');
+const { authenticateJWT, ensureAdmin } = require('../middleware/auth');
 const router = express.Router();
 const { camelToSnake, snakeToCamel } = require('../helpers/sql');
 const {
@@ -190,15 +190,15 @@ router.post('/:checklistId/items/new', authenticateJWT, async (req, res) => {
     }
 });
 
-module.exports = router;
-
 // ADMIN Route to get all checklists
-// router.get('/all', ensureAdmin, async (req, res) => {
-//     try {
-//         const checklists = await getAllChecklists();
-//         res.json(checklists);
-//     } catch (error) {
-//         console.error('Error fetching all checklists:', error);
-//         res.status(500).json({ error: 'Server error' });
-//     }
-// });
+router.get('/all', ensureAdmin, async (_req, res) => {
+    try {
+        const checklists = await getAllChecklists();
+        res.json(checklists);
+    } catch (error) {
+        console.error('Error fetching all checklists:', error);
+        res.status(error.status || 500).json({ message: error.message });
+    }
+});
+
+module.exports = router;

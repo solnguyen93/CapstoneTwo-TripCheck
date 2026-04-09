@@ -30,8 +30,8 @@ const EditUserForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Validate if the checklist name is empty
-        if (!userData.username.trim()) {
-            setMsg({ message: 'Title cannot be empty', type: 'danger' });
+        if (!userData.name.trim()) {
+            setMsg({ message: 'Name cannot be empty', type: 'danger' });
             return;
         }
         try {
@@ -65,9 +65,8 @@ const EditUserForm = () => {
         try {
             // Call the TripCheckApi method to delete the user
             await TripCheckApi.deleteUser(username);
-            // Redirect to the home page or any appropriate page after deletion
-            navigate('/');
             logout();
+            navigate('/');
             // Display success message upon successful deletion
             setMsg({ message: 'User deleted successfully', type: 'success' });
         } catch (error) {
